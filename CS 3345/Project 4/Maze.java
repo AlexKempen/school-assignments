@@ -1,3 +1,9 @@
+
+/**
+ * Alex Kempen
+ * CS 3345.001
+ */
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;

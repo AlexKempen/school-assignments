@@ -1,3 +1,9 @@
+
+/**
+ * Alex Kempen
+ * CS 3345.001
+ */
+
 import java.util.List;
 import java.util.Scanner;
 
