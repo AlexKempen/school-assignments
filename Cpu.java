@@ -1,4 +1,4 @@
-package src;
+
 
 /**
  * A class which manages a Memory object.

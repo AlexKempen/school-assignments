@@ -1,5 +1,3 @@
-package src;
-
 enum OperatingMode {
     USER,
     KERNEL

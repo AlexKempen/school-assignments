@@ -1,5 +1,3 @@
-package src;
-
 public class Registers {
     public int programCounter;
     public int stackPointer;
