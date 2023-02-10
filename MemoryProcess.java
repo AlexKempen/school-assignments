@@ -1,34 +1,29 @@
 import java.util.Scanner;
-import java.io.PrintWriter;
 
 /**
  * Creates a memory in a separate process and exposes its methods.
  */
 public class MemoryProcess {
-    /**
+    /*
      * The main method instantiated by this class.
      */
     public static void main(String[] args) {
         Memory memory = new Memory();
 
         Scanner scanner = new Scanner(System.in);
-        PrintWriter printWriter = new PrintWriter(System.out);
-
-        while (!scanner.hasNext()) {
+        while (scanner.hasNext()) {
             String command = scanner.nextLine();
-            if (command == "read") {
-                int address = Integer.parseInt(scanner.nextLine());
+            if (command.equals("read")) {
+                int address = scanner.nextInt();
                 System.out.println(memory.read(address));
-                System.out.flush();
-            } else if (command == "write") {
-                int address = Integer.parseInt(scanner.nextLine());
-                int data = Integer.parseInt(scanner.nextLine());
+            } else if (command.equals("write")) {
+                int address = scanner.nextInt();
+                int data = scanner.nextInt();
                 memory.write(address, data);
-            } else if (command == "exit") {
+            } else if (command.equals("exit")) {
                 break;
             }
         }
         scanner.close();
-        printWriter.close();
     }
 }

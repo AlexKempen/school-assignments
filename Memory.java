@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Memory {
     public int read(int address) {
@@ -10,5 +11,6 @@ public class Memory {
         memory.set(address, data);
     }
 
-    private List<Integer> memory = new ArrayList<>(2000);
+    // initialize array list with 0
+    private List<Integer> memory = new ArrayList<>(Collections.nCopies(2000, 0));
 }

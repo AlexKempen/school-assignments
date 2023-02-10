@@ -8,9 +8,6 @@ enum OperatingMode {
  */
 public class OperatingSystem {
     OperatingSystem() {
-        // ProcessBuilder memoryProcessBuilder = new
-        // ProcessBuilder("MemoryManager.java");
-        // memoryProcessBuilder.redirectOutput(Redirect.appendTo());
     }
 
     private MemoryManager memoryManager;

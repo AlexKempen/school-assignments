@@ -8,8 +8,7 @@
             "type": "java",
             "name": "Launch MemoryProcess",
             "request": "launch",
-            "mainClass": "MemoryProcess",
-            "projectName": "school-assignments_a790e08b"
+            "mainClass": "MemoryProcess"
         },
         {
             "type": "java",

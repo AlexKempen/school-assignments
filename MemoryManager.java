@@ -1,29 +1,33 @@
 import java.io.IOException;
-import java.util.Scanner;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
 /**
  * A class which uses a MemoryProcess.
  */
 public class MemoryManager {
-    MemoryManager() throws IOException {
-        process = startMemoryProcess();
+    MemoryManager(Process process) throws IOException {
+        this.process = process;
         // true to enable autoflushing
         printWriter = new PrintWriter(process.getOutputStream(), true);
         scanner = new Scanner(process.getInputStream());
     }
 
-    public static Process startMemoryProcess() throws IOException {
-        return Runtime.getRuntime().exec("java MemoryProcess");
+    public static MemoryManager startMemoryManager() {
+        try {
+            // compile MemoryProcess.java
+            Process compileProcess = Runtime.getRuntime().exec("javac MemoryProcess.java");
+            compileProcess.waitFor();
+            return new MemoryManager(Runtime.getRuntime().exec("java MemoryProcess"));
+        } catch (Exception exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     public void exit() throws InterruptedException {
         printWriter.println("exit");
         printWriter.flush();
-
         process.waitFor();
-
-        scanner.close();
         printWriter.close();
     }
 
@@ -35,15 +39,13 @@ public class MemoryManager {
     }
 
     public int read(int address) {
-        printWriter.println("read");
-        printWriter.println(address);
+        printWriter.printf("read\n");
+        printWriter.flush();
+        printWriter.printf(address + "\n");
         printWriter.flush();
 
-        while (!scanner.hasNext()) {
-            continue;
-        }
-
-        return Integer.parseInt(scanner.nextLine());
+        int data = this.scanner.nextInt();
+        return data;
     }
 
     private Process process;
