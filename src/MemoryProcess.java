@@ -29,25 +29,28 @@ public class MemoryProcess {
         scanner.close();
     }
 
-    MemoryProcess() throws IOException {
+    public MemoryProcess() throws IOException {
         this.process = startMemoryProcess();
         this.scanner = new Scanner(process.getInputStream());
-        this.printWriter = new PrintWriter(process.getOutputStream());
+        // true to enable autoflushing
+        this.printWriter = new PrintWriter(process.getOutputStream(), true);
     }
 
-    public void exit() {
-        this.printWriter.write("exit");
-        this.printWriter.flush();
+    public void exit() throws InterruptedException {
+        this.printWriter.println("exit");
+        this.process.waitFor();
     }
 
     public void write(int address, int data) {
-        this.printWriter.write("write");
-        this.printWriter.flush();
+        this.printWriter.println("write");
+        this.printWriter.print(address);
+        this.printWriter.print(data);
     }
 
     public int read(int address) {
-        this.printWriter.flush();
-        return 0;
+        this.printWriter.println("read");
+        this.printWriter.println(address);
+        return this.scanner.nextInt();
     }
 
     /**
@@ -57,7 +60,7 @@ public class MemoryProcess {
         return Runtime.getRuntime().exec("java MemoryProcess");
     }
 
-    Process process;
-    Scanner scanner;
-    PrintWriter printWriter;
+    private Process process;
+    private Scanner scanner;
+    private PrintWriter printWriter;
 }
