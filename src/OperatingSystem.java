@@ -1,3 +1,7 @@
+package src;
+
+import src.memory.MemoryManager;
+
 enum OperatingMode {
     USER,
     KERNEL

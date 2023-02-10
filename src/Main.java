@@ -1,3 +1,7 @@
+package src;
+
+import src.memory.MemoryManager;
+
 class Main {
     public static void main(String[] args) {
         try {

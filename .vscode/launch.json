@@ -8,13 +8,13 @@
             "type": "java",
             "name": "Launch MemoryProcess",
             "request": "launch",
-            "mainClass": "MemoryProcess"
+            "mainClass": "src.memory.MemoryProcess"
         },
         {
             "type": "java",
             "name": "Launch Main",
             "request": "launch",
-            "mainClass": "Main"
+            "mainClass": "src.Main"
         }
     ]
 }
