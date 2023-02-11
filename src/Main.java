@@ -4,11 +4,13 @@ import src.memory.MemoryManager;
 
 class Main {
     public static void main(String[] args) {
+        ProcessUtils.compile();
+
         try {
             MemoryManager manager = MemoryManager.startMemoryManager();
             manager.write(10, 5);
             System.out.println(manager.read(10));
-            // manager.exit();
+            manager.exit();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,19 +1,17 @@
 package src.command;
 
-import java.io.PrintStream;
-import java.util.Scanner;
+import javax.lang.model.type.NullType;
 
-public class ExitCommand extends Command {
-    public ExitCommand() {
-        super("exit");
+public class ExitCommand extends Command<NullType> {
+    @Override
+    public boolean exit() {
+        return true;
     }
 
     @Override
-    public void send(PrintStream out) {
-        out.println(name);
+    public void execute(NullType exectuor) {
+        throw new AssertionError("An exit command may not be executed.");
     }
 
-    @Override
-    public void recieve(Scanner scanner) {
-    }
+    private static final long serialVersionUID = 0;
 }

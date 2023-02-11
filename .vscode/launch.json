@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch CommandRecieverTest",
+            "request": "launch",
+            "mainClass": "src.command.CommandRecieverTest",
+            "projectName": "school-assignments_52bf7162"
+        },
+        {
+            "type": "java",
             "name": "Launch MemoryProcess",
             "request": "launch",
             "mainClass": "src.memory.MemoryProcess"
