@@ -1,4 +1,4 @@
-package src;
+package src.operatingsystem;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,6 @@ import src.command.CommandReciever;
 import src.command.Executor;
 import src.cpu.Cpu;
 import src.memory.Memory;
-import src.operating_system.Subsystem;
 
 /**
  * Utilities for starting processes.
@@ -49,13 +48,13 @@ public class ProcessUtils {
      */
     public static Process startSubsystemProcess(Subsystem subsystem) {
         try {
-            String[] runArgs = { "java", "-cp", "out", "src/ProcessUtils", subsystem.toString() };
+            String[] runArgs = { "java", "-cp", "out", "src/operatingsystem/ProcessUtils", subsystem.toString() };
             // Use processbuilder instead of runtime.exec to conviniently enable features
             // like redirecting std::error
             // (runtime.exec is just a processbuilder under the hood anyways)
-            ProcessBuilder pb = new ProcessBuilder(runArgs);
-            pb.redirectError(new File(subsystem.toString() + "-error.txt"));
-            return pb.start();
+            ProcessBuilder processBuilder = new ProcessBuilder(runArgs);
+            processBuilder.redirectError(new File(subsystem.toString() + "-error.txt"));
+            return processBuilder.start();
         } catch (Exception exception) {
             throw new AssertionError(exception);
         }
@@ -65,10 +64,13 @@ public class ProcessUtils {
      * Compiles the project using javac.
      */
     public static void compile() {
-        String[] compileArgs = { "javac", "-d", "out", "src/*.java" };
+        String[] compileArgs = { "javac", "-d", "./out/",
+                "./src/operatingsystem/ProcessUtils.java",
+                "./src/Main.java" };
         try {
-            Process compileProcess = new ProcessBuilder(compileArgs).start();
-            waitForProcess(compileProcess);
+            ProcessBuilder processBuilder = new ProcessBuilder(compileArgs);
+            processBuilder.redirectError(new File("compile-error.txt"));
+            waitForProcess(processBuilder.start());
         } catch (IOException e) {
             throw new AssertionError("Failed to compile project.", e);
         }
@@ -76,7 +78,9 @@ public class ProcessUtils {
 
     static public void waitForProcess(Process process) {
         try {
-            process.waitFor(10, TimeUnit.SECONDS);
+            if (!process.waitFor(10, TimeUnit.SECONDS)) {
+                throw new AssertionError("Process timed out.");
+            }
         } catch (InterruptedException e) {
             throw new AssertionError("Process failed to exit.", e);
         }

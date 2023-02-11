@@ -1,8 +1,8 @@
 package src.cpu;
 
-import src.Manager;
-import src.ProcessUtils;
-import src.operating_system.Subsystem;
+import src.operatingsystem.Manager;
+import src.operatingsystem.ProcessUtils;
+import src.operatingsystem.Subsystem;
 
 public class CpuManager extends Manager {
     public CpuManager(Process process) {

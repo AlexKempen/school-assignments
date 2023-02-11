@@ -1,4 +1,4 @@
-package src;
+package src.cpu;
 public class Registers {
     public int programCounter;
     public int stackPointer;

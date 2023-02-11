@@ -1,10 +1,10 @@
 package src.memory;
 
-import src.Manager;
-import src.ProcessUtils;
 import src.memory.command.ReadCommand;
 import src.memory.command.WriteCommand;
-import src.operating_system.Subsystem;
+import src.operatingsystem.Manager;
+import src.operatingsystem.ProcessUtils;
+import src.operatingsystem.Subsystem;
 
 /**
  * A class which creates and manages a MemoryProcess.

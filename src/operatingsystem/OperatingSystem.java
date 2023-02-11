@@ -1,4 +1,4 @@
-package src.operating_system;
+package src.operatingsystem;
 
 import src.cpu.CpuManager;
 import src.memory.MemoryManager;

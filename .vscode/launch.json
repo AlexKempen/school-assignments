@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch ProcessUtils",
+            "request": "launch",
+            "mainClass": "src.operating_system.ProcessUtils",
+            "projectName": "school-assignments_52bf7162"
+        },
+        {
+            "type": "java",
             "name": "Launch CommandRecieverTest",
             "request": "launch",
             "mainClass": "src.command.CommandRecieverTest",

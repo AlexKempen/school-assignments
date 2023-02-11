@@ -1,4 +1,4 @@
-package src.operating_system;
+package src.operatingsystem;
 
 public enum OperatingMode {
     USER,
