@@ -14,7 +14,7 @@ public class CommandInvoker {
     /**
      * Writes a command to the output stream.
      */
-    public <T> void send(Command<T> command) {
+    public <T extends Executor> void send(Command<T> command) {
         try {
             out.writeObject(command);
             out.flush();

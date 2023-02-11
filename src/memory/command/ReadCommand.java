@@ -1,11 +1,9 @@
 package src.memory.command;
 
+import src.command.Command;
 import src.memory.Memory;
 
-public class ReadCommand extends MemoryCommand {
-    public ReadCommand() {
-    }
-
+public class ReadCommand extends Command<Memory> {
     public ReadCommand(int address) {
         this.address = address;
     }

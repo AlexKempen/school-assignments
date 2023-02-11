@@ -1,11 +1,9 @@
 package src.memory.command;
 
+import src.command.Command;
 import src.memory.Memory;
 
-public class WriteCommand extends MemoryCommand {
-    public WriteCommand() {
-    }
-
+public class WriteCommand extends Command<Memory> {
     public WriteCommand(int address, int data) {
         this.address = address;
         this.data = data;

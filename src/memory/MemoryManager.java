@@ -1,37 +1,21 @@
 package src.memory;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-
+import src.Manager;
 import src.ProcessUtils;
-import src.command.CommandInvoker;
-import src.command.ExitCommand;
 import src.memory.command.ReadCommand;
 import src.memory.command.WriteCommand;
+import src.operating_system.Subsystem;
 
 /**
  * A class which creates and manages a MemoryProcess.
  */
-public class MemoryManager {
+public class MemoryManager extends Manager {
     MemoryManager(Process process) {
-        this.process = process;
-        scanner = new Scanner(process.getInputStream());
-
-        try {
-            invoker = new CommandInvoker(new ObjectOutputStream(process.getOutputStream()));
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
+        super(process);
     }
 
     public static MemoryManager startMemoryManager() {
-        return new MemoryManager(ProcessUtils.start("src/memory/MemoryProcess"));
-    }
-
-    public void exit() {
-        invoker.send(new ExitCommand());
+        return new MemoryManager(ProcessUtils.startSubsystemProcess(Subsystem.MEMORY));
     }
 
     public void write(int address, int data) {
@@ -42,8 +26,4 @@ public class MemoryManager {
         invoker.send(new ReadCommand(address));
         return Integer.parseInt(scanner.nextLine());
     }
-
-    private Process process;
-    private Scanner scanner;
-    private CommandInvoker invoker;
 }

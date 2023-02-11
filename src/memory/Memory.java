@@ -1,11 +1,14 @@
 package src.memory;
 
 import java.util.List;
+
+import src.command.Executor;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Memory {
+public class Memory implements Executor {
     public Memory(PrintStream out) {
         this.out = out;
     }
