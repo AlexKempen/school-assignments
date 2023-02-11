@@ -13,6 +13,11 @@ public class OperatingSystem {
         this.mode = OperatingMode.USER;
     }
 
+    public void exit() {
+        memoryManager.exit();
+        cpuManager.exit();
+    }
+
     public MemoryManager memoryManager;
     public CpuManager cpuManager;
 

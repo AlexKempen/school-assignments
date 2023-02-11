@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 /**
- * Executes `Command`s by sending them to a given `ObjectOutputStream`.
+ * Executes Commands by sending them to a given ObjectOutputStream.
  */
 public class CommandInvoker {
     public CommandInvoker(ObjectOutputStream out) {
@@ -12,9 +12,10 @@ public class CommandInvoker {
     }
 
     /**
-     * Writes a command to the output stream.
+     * Writes a command to out.
      */
-    public <T extends Executor> void send(Command<T> command) {
+    // T is a Command with a type which extends Executor
+    public <T extends Command<? extends Executor>> void send(T command) {
         try {
             out.writeObject(command);
             out.flush();

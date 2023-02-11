@@ -1,7 +1,11 @@
 package src.memory;
 
-import src.memory.command.ReadCommand;
-import src.memory.command.WriteCommand;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import src.memory.command.BatchWriteCommand;
 import src.operatingsystem.Manager;
 import src.operatingsystem.ProcessUtils;
 import src.operatingsystem.Subsystem;
@@ -18,12 +22,26 @@ public class MemoryManager extends Manager {
         return new MemoryManager(ProcessUtils.startSubsystemProcess(Subsystem.MEMORY));
     }
 
-    public void write(int address, int data) {
-        invoker.send(new WriteCommand(address, data));
+    /**
+     * Loads a program into memory.
+     */
+    public void loadProgram(InputStream stream) {
+        try (Scanner scanner = new Scanner(stream)) {
+            List<Integer> program = new ArrayList<>();
+            while (scanner.hasNextLine()) {
+                // extracts the first digit in each line
+                program.add(Integer.parseInt(scanner.findInLine("\\d+")));
+            }
+            invoker.send(new BatchWriteCommand(program));
+        }
     }
 
-    public int read(int address) {
-        invoker.send(new ReadCommand(address));
-        return Integer.parseInt(scanner.nextLine());
-    }
+    // public void write(int address, int data) {
+    // invoker.send(new WriteCommand(address, data));
+    // }
+
+    // public int read(int address) {
+    // invoker.send(new ReadCommand(address));
+    // return Integer.parseInt(scanner.nextLine());
+    // }
 }
