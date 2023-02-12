@@ -16,5 +16,4 @@ public class WriteCommand extends Command<Memory> {
 
     private int address;
     private int data;
-    private static final long serialVersionUID = Integer.valueOf("write");
 }

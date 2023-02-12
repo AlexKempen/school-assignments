@@ -4,15 +4,10 @@ import java.util.List;
 
 import src.command.Executor;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Memory extends Executor {
-    public Memory(PrintStream out) {
-        super(out);
-    }
-
     public void read(int address) {
         out.println(memory.get(address));
         out.flush();

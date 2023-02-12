@@ -8,8 +8,8 @@ import src.memory.MemoryManager;
  */
 public class OperatingSystem {
     public OperatingSystem() {
-        this.memoryManager = MemoryManager.startMemoryManager();
-        this.cpuManager = CpuManager.startCpuManager();
+        this.memoryManager = new MemoryManager();
+        this.cpuManager = new CpuManager();
         this.mode = OperatingMode.USER;
     }
 

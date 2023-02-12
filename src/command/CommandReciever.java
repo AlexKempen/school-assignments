@@ -1,11 +1,20 @@
 package src.command;
 
 import java.io.ObjectInputStream;
+import java.io.PrintStream;
 
+/**
+ * A class defining a generic receiver for Commands
+ * which recieves them from an ObjectInputStream.
+ * The first object in the ObjectInputStream is the
+ * executor; it recieves an output stream which
+ * can be used to stream data back to the CommandInvoker.
+ */
 public class CommandReciever {
-    public CommandReciever(Executor executor, ObjectInputStream in) {
-        this.executor = executor;
+    public CommandReciever(ObjectInputStream in, PrintStream out) {
         this.in = in;
+        executor = (Executor) getCommandObject();
+        executor.SetOutput(out);
     }
 
     public void handleCommands() {

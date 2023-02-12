@@ -3,24 +3,21 @@ package src.operatingsystem;
 import java.util.Scanner;
 
 import src.command.CommandInvoker;
-import src.command.ExitCommand;
+import src.command.Executor;
 
 /**
  * A generic base class for implementing a Subsystem Manager.
  */
-public class Manager {
-    protected Manager(Process process) {
-        this.process = process;
-        scanner = new Scanner(process.getInputStream());
-        invoker = new CommandInvoker(ProcessUtils.getObjectOutputStream(process.getOutputStream()));
+public class Manager<T extends Executor> {
+    protected Manager(T executor) {
+        invoker = new CommandInvoker<T>(executor);
+        scanner = invoker.getScanner();
     }
 
     public void exit() {
-        invoker.send(new ExitCommand());
-        ProcessUtils.waitForProcess(process);
+        invoker.exit();
     }
 
-    private Process process;
+    protected CommandInvoker<T> invoker;
     protected Scanner scanner;
-    protected CommandInvoker invoker;
 }

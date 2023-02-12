@@ -1,5 +1,10 @@
 package src.command;
 
+/**
+ * A command which can be used to cause a CommandProcess to
+ * gracefully close. Note this is exposed via CommandInvoker.exit(),
+ * and should not be used directly.
+ */
 public class ExitCommand extends Command<Executor> {
     @Override
     public boolean exit() {
@@ -10,6 +15,4 @@ public class ExitCommand extends Command<Executor> {
     public void execute(Executor executor) {
         // do nothing
     }
-
-    private static final long serialVersionUID = 0;
 }

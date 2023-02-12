@@ -8,64 +8,24 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
-import src.command.CommandReciever;
-import src.command.Executor;
-import src.cpu.Cpu;
-import src.memory.Memory;
-
 /**
  * Utilities for starting processes.
  */
 public class ProcessUtils {
-
-    /**
-     * The process main function which runs the Memory and Cpu subsystems.
-     * 
-     * @param args[1] : The name of the subsystem to run.
-     */
-    public static void main(String[] args) {
-        CommandReciever reciever = new CommandReciever(getExecutor(args[0]),
-                getObjectInputStream(System.in));
-        reciever.handleCommands();
-    }
-
-    /**
-     * Retrieves the Executor of a specific subsystem for use in a sub-process.
-     */
-    private static Executor getExecutor(String arg) {
-        if (arg.equals(Subsystem.MEMORY.toString())) {
-            return new Memory(System.out);
-        } else if (arg.equals(Subsystem.CPU.toString())) {
-            return new Cpu();
-        }
-        throw new IllegalArgumentException("Invalid subsystem name: " + arg);
-    }
-
-    /**
-     * Starts a process which manages a single subsystem.
-     * 
-     * @return : The started process.
-     */
-    public static Process startSubsystemProcess(Subsystem subsystem) {
-        try {
-            String[] runArgs = { "java", "-cp", "out", "src/operatingsystem/ProcessUtils", subsystem.toString() };
-            // Use processbuilder instead of runtime.exec to conviniently enable features
-            // like redirecting std::error
-            // (runtime.exec is just a processbuilder under the hood anyways)
-            ProcessBuilder processBuilder = new ProcessBuilder(runArgs);
-            processBuilder.redirectError(new File(subsystem.toString() + "-error.txt"));
-            return processBuilder.start();
-        } catch (Exception exception) {
-            throw new AssertionError(exception);
-        }
-    }
-
     /**
      * Compiles the project using javac.
+     * Repeated invocations of compile() will have no effect;
+     * compile will only run once.
      */
     public static void compile() {
+        // only compile once
+        if (compiled) {
+            return;
+        }
+        compiled = true;
+
         String[] compileArgs = { "javac", "-d", "./out/",
-                "./src/operatingsystem/ProcessUtils.java",
+                "./src/command/CommandProcess.java",
                 "./src/Main.java" };
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(compileArgs);
@@ -75,6 +35,8 @@ public class ProcessUtils {
             throw new AssertionError("Failed to compile project.", e);
         }
     }
+
+    private static boolean compiled = false;
 
     static public void waitForProcess(Process process) {
         try {

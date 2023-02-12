@@ -21,5 +21,4 @@ public class BatchWriteCommand extends Command<Memory> {
     }
 
     private List<Integer> data;
-    private static final long serialVersionUID = Integer.valueOf("batchWrite");
 }

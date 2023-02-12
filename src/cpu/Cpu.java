@@ -7,7 +7,6 @@ import src.command.Executor;
  */
 public class Cpu extends Executor {
     public Cpu() {
-        Cpu();
     }
 
     public Registers registers;

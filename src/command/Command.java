@@ -17,4 +17,6 @@ public abstract class Command<T extends Executor> implements Serializable {
      * Executes the command using the given executor.
      */
     public abstract void execute(T executor);
+
+    private static final long serialVersionUID = 1L;
 }

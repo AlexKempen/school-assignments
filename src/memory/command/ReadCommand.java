@@ -14,5 +14,4 @@ public class ReadCommand extends Command<Memory> {
     }
 
     private int address;
-    private static final long serialVersionUID = Integer.valueOf("read");
 }
