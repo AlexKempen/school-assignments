@@ -8,9 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Memory extends Executor {
-    public void read(int address) {
-        out.println(memory.get(address));
-        out.flush();
+    public Integer read(int address) {
+        return memory.get(address);
     }
 
     public void write(int address, int data) {

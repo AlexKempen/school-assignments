@@ -11,16 +11,16 @@ public class CommandProcess {
      * commands on an Executor.
      */
     public static void main(String[] args) {
-        CommandReciever reciever = new CommandReciever(
-                ProcessUtils.getObjectInputStream(System.in), System.out);
-        reciever.handleCommands();
+        CommandStream stream = new CommandStream(System.in, System.out);
+        CommandReciever reciever = new CommandReciever(stream);
+        reciever.processCommands();
     }
 
     public static Process startCommandProcess() {
         ProcessUtils.compile();
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(PROCESS_COMMAND);
-            processBuilder.redirectError(new File("process-error.txt"));
+            processBuilder.redirectError(new File("error.txt"));
             return processBuilder.start();
         } catch (Exception exception) {
             throw new AssertionError("Failed to start process.", exception);

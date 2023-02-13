@@ -2,10 +2,6 @@ package src.operatingsystem;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -45,22 +41,6 @@ public class ProcessUtils {
             }
         } catch (InterruptedException e) {
             throw new AssertionError("Process failed to exit.", e);
-        }
-    }
-
-    public static ObjectOutputStream getObjectOutputStream(OutputStream out) {
-        try {
-            return new ObjectOutputStream(out);
-        } catch (IOException e) {
-            throw new AssertionError("Failed to construct object output stream.", e);
-        }
-    }
-
-    public static ObjectInputStream getObjectInputStream(InputStream in) {
-        try {
-            return new ObjectInputStream(in);
-        } catch (IOException e) {
-            throw new AssertionError("Failed to construct object input stream.", e);
         }
     }
 }

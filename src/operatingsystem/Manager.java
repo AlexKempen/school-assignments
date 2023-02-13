@@ -1,7 +1,5 @@
 package src.operatingsystem;
 
-import java.util.Scanner;
-
 import src.command.CommandInvoker;
 import src.command.Executor;
 
@@ -11,7 +9,6 @@ import src.command.Executor;
 public class Manager<T extends Executor> {
     protected Manager(T executor) {
         invoker = new CommandInvoker<T>(executor);
-        scanner = invoker.getScanner();
     }
 
     public void exit() {
@@ -19,5 +16,4 @@ public class Manager<T extends Executor> {
     }
 
     protected CommandInvoker<T> invoker;
-    protected Scanner scanner;
 }

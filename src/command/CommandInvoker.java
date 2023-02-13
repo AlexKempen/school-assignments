@@ -1,8 +1,6 @@
 package src.command;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.Scanner;
+import java.io.Serializable;
 
 import src.operatingsystem.ProcessUtils;
 
@@ -13,42 +11,29 @@ import src.operatingsystem.ProcessUtils;
 public class CommandInvoker<T extends Executor> {
     public CommandInvoker(T executor) {
         process = CommandProcess.startCommandProcess();
-        out = ProcessUtils.getObjectOutputStream(process.getOutputStream());
+        stream = new CommandStream(process.getInputStream(), process.getOutputStream());
         // send executor to the process
-        writeObject(executor);
-    }
-
-    /**
-     * @return : A Scanner connected to the given process instance.
-     */
-    public Scanner getScanner() {
-        return new Scanner(process.getInputStream());
+        stream.writeObject(executor);
     }
 
     /**
      * Writes a command to out.
      */
-    public <C extends Command<T>> void send(C command) {
-        writeObject(command);
+    public void send(Command<T> command) {
+        stream.writeObject(command);
+    }
+
+    public <R extends Serializable> R send(ResultCommand<T, R> command) {
+        stream.writeObject(command);
+        Object object = stream.readObject();
+        return stream.<R>castObject(object);
     }
 
     public void exit() {
-        writeObject(new ExitCommand());
+        stream.writeObject(new ExitCommand());
         ProcessUtils.waitForProcess(process);
     }
 
-    /**
-     * Writes an Object to out.
-     */
-    private void writeObject(Object object) {
-        try {
-            out.writeObject(object);
-            out.flush();
-        } catch (IOException e) {
-            throw new AssertionError("Failed to send object.", e);
-        }
-    }
-
     private Process process;
-    private ObjectOutputStream out;
+    private CommandStream stream;
 }

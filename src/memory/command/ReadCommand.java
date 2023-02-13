@@ -1,16 +1,16 @@
 package src.memory.command;
 
-import src.command.Command;
+import src.command.ResultCommand;
 import src.memory.Memory;
 
-public class ReadCommand extends Command<Memory> {
+public class ReadCommand extends ResultCommand<Memory, Integer> {
     public ReadCommand(int address) {
         this.address = address;
     }
 
     @Override
-    public void execute(Memory memory) {
-        memory.read(address);
+    public Integer execute(Memory memory) {
+        return memory.read(address);
     }
 
     private int address;

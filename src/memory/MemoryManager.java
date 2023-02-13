@@ -37,7 +37,6 @@ public class MemoryManager extends Manager<Memory> {
     }
 
     public int read(int address) {
-        invoker.send(new ReadCommand(address));
-        return Integer.parseInt(scanner.nextLine());
+        return invoker.send(new ReadCommand(address));
     }
 }

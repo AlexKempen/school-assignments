@@ -1,8 +1,5 @@
 package src.command;
 
-import java.io.ObjectInputStream;
-import java.io.PrintStream;
-
 /**
  * A class defining a generic receiver for Commands
  * which recieves them from an ObjectInputStream.
@@ -11,29 +8,18 @@ import java.io.PrintStream;
  * can be used to stream data back to the CommandInvoker.
  */
 public class CommandReciever {
-    public CommandReciever(ObjectInputStream in, PrintStream out) {
-        this.in = in;
-        executor = (Executor) getCommandObject();
-        executor.SetOutput(out);
+
+    public CommandReciever(CommandStream stream) {
+        this.stream = stream;
+        executor = (Executor) this.stream.readObject();
     }
 
-    public void handleCommands() {
+    public void processCommands() {
         while (true) {
-            Object object = getCommandObject();
+            Object object = stream.readObject();
             if (executeCommandObject(object)) {
                 return;
             }
-        }
-    }
-
-    /**
-     * Retrievs a command object from the input stream.
-     */
-    private Object getCommandObject() {
-        try {
-            return in.readObject();
-        } catch (Exception e) {
-            throw new AssertionError("Failed to read in Command object.", e);
         }
     }
 
@@ -43,19 +29,19 @@ public class CommandReciever {
      * @return true if the process should exit.
      */
     private boolean executeCommandObject(Object object) {
-        if (!(object instanceof Command<?>)) {
-            throw new AssertionError("Expected valid command.");
+        if (object instanceof Command<?>) {
+            Command<Executor> command = stream.<Command<Executor>>castObject(object);
+            command.execute(executor);
+            return command.exit();
+        } else if (object instanceof ResultCommand<?, ?>) {
+            ResultCommand<Executor, ?> resultCommand = stream
+                    .<ResultCommand<Executor, ?>>castObject(object);
+            stream.writeObject(resultCommand.execute(executor));
+            return true; // always continue after ResultCommand
         }
-
-        // Suppress unchecked cast warning
-        // T cannot be verified due to type erasure
-        @SuppressWarnings("unchecked")
-        Command<Executor> command = (Command<Executor>) object;
-
-        command.execute(executor);
-        return command.exit();
+        throw new AssertionError("Expected valid command.");
     }
 
     private Executor executor;
-    private ObjectInputStream in;
+    private CommandStream stream;
 }
