@@ -4,7 +4,7 @@ import src.command.CommandInvoker;
 import src.command.Executor;
 
 /**
- * A generic base class for implementing a Subsystem Manager.
+ * A generic base class for managing a CommandProcess via a CommandInvoker.
  */
 public class Manager<T extends Executor> {
     protected Manager(T executor) {
