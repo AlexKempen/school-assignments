@@ -19,7 +19,7 @@ public class MemoryManager extends Manager<Memory> {
     }
 
     /**
-     * Loads a program into memory.
+     * Loads a program into memory at address 0.
      */
     public void loadProgram(InputStream in) {
         try (Scanner scanner = new Scanner(in)) {
@@ -28,7 +28,7 @@ public class MemoryManager extends Manager<Memory> {
                 // extracts the first digit in each line
                 program.add(Integer.parseInt(scanner.findInLine("\\d+")));
             }
-            invoker.send(new BatchWriteCommand(program));
+            invoker.send(new BatchWriteCommand(0, program));
         }
     }
 
