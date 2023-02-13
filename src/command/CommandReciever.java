@@ -8,10 +8,9 @@ package src.command;
  * can be used to stream data back to the CommandInvoker.
  */
 public class CommandReciever {
-
     public CommandReciever(CommandStream stream) {
         this.stream = stream;
-        executor = (Executor) this.stream.readObject();
+        executor = stream.<Executor>read();
     }
 
     public void processCommands() {

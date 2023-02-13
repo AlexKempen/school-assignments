@@ -21,8 +21,8 @@ public class MemoryManager extends Manager<Memory> {
     /**
      * Loads a program into memory.
      */
-    public void loadProgram(InputStream stream) {
-        try (Scanner scanner = new Scanner(stream)) {
+    public void loadProgram(InputStream in) {
+        try (Scanner scanner = new Scanner(in)) {
             List<Integer> program = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 // extracts the first digit in each line

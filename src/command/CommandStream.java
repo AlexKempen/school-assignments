@@ -8,15 +8,12 @@ import java.io.OutputStream;
 
 public class CommandStream {
     public CommandStream(InputStream in, OutputStream out) {
-        makeObjectStreams(in, out);
-    }
-
-    private void makeObjectStreams(InputStream in, OutputStream out) {
         try {
-            this.in = new ObjectInputStream(in);
+            // out has to be constructed before in to prevent errors with stream EOF
             this.out = new ObjectOutputStream(out);
+            this.in = new ObjectInputStream(in);
         } catch (IOException e) {
-            throw new AssertionError("Failed to construct object input stream.", e);
+            throw new AssertionError("Failed to construct object streams.", e);
         }
     }
 
@@ -29,6 +26,10 @@ public class CommandStream {
         }
     }
 
+    public <T> T read() {
+        return this.<T>castObject(readObject());
+    }
+
     public Object readObject() {
         try {
             return in.readObject();
@@ -36,6 +37,7 @@ public class CommandStream {
             throw new AssertionError("Failed to read object.", e);
         }
     }
+
 
     /**
      * Cast an Object to a given type.

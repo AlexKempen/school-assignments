@@ -23,6 +23,9 @@ public class CommandInvoker<T extends Executor> {
         stream.writeObject(command);
     }
 
+    /**
+     * Writes a ResultCommand to out and returns the result.
+     */
     public <R extends Serializable> R send(ResultCommand<T, R> command) {
         stream.writeObject(command);
         Object object = stream.readObject();

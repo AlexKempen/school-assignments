@@ -1,7 +1,5 @@
 package src.command;
 
-import java.io.File;
-
 import src.operatingsystem.ProcessUtils;
 
 public class CommandProcess {
@@ -16,11 +14,15 @@ public class CommandProcess {
         reciever.processCommands();
     }
 
+    /**
+     * A factory for a Command Process.
+     * 
+     * @return A Command Process.
+     */
     public static Process startCommandProcess() {
         ProcessUtils.compile();
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(PROCESS_COMMAND);
-            processBuilder.redirectError(new File("error.txt"));
             return processBuilder.start();
         } catch (Exception exception) {
             throw new AssertionError("Failed to start process.", exception);
