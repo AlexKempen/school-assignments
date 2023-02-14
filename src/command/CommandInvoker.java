@@ -9,8 +9,7 @@ import src.operatingsystem.ProcessUtils;
  * Note the given command process assumes ownership of a given executor.
  */
 public class CommandInvoker<T extends Executor> {
-    public CommandInvoker(T executor) {
-        process = CommandProcess.startCommandProcess();
+    public CommandInvoker(T executor, Process process) {
         stream = new CommandStream(process.getInputStream(), process.getOutputStream());
         // send executor to the process
         stream.writeObject(executor);

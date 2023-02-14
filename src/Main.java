@@ -1,11 +1,12 @@
 package src;
 
-import src.memory.MemoryManager;
+import java.io.IOException;
+
+import src.operatingsystem.OperatingSystem;
 
 class Main {
-    public static void main(String[] args) {
-        MemoryManager manager = new MemoryManager();
-        manager.write(1, 5);
-        System.out.println(manager.read(1));
+    public static void main(String[] args) throws NumberFormatException, IOException {
+        OperatingSystem operatingSystem = OperatingSystem.startOperatingSystem(args);
+        // operatingSystem.fetchInstruction();
     }
 }

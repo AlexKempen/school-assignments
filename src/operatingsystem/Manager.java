@@ -1,6 +1,7 @@
 package src.operatingsystem;
 
 import src.command.CommandInvoker;
+import src.command.CommandProcess;
 import src.command.Executor;
 
 /**
@@ -8,7 +9,7 @@ import src.command.Executor;
  */
 public class Manager<T extends Executor> {
     protected Manager(T executor) {
-        invoker = new CommandInvoker<T>(executor);
+        invoker = new CommandInvoker<T>(executor, CommandProcess.startCommandProcess());
     }
 
     public void exit() {

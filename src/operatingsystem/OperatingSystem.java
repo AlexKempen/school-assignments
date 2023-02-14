@@ -1,5 +1,7 @@
 package src.operatingsystem;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
@@ -13,32 +15,60 @@ import src.memory.MemoryManager;
  * Manages a cpu and memory process.
  */
 public class OperatingSystem {
-    public OperatingSystem() {
-        this.memoryManager = new MemoryManager();
-        this.cpuManager = new CpuManager();
-        this.mode = OperatingMode.USER;
+    // Direct injection
+    public OperatingSystem(MemoryManager memoryManager, CpuManager cpuManager, Timer timer) {
+        this.memoryManager = memoryManager;
+        this.cpuManager = cpuManager;
+        this.timer = timer;
     }
+
+    /**
+     * A factory for an operating system.
+     * 
+     * @param args : An array of command line args of the format <program_file>
+     *             <timer_increment>.
+     */
+    public static OperatingSystem startOperatingSystem(String[] args) throws IOException {
+        List<Integer> program;
+        try {
+            program = parseProgram(new FileInputStream(args[0]));
+        } catch (IOException e) {
+            throw new IOException("Failed to parse program file.", e);
+        }
+
+        int timerIncrement;
+        try {
+            timerIncrement = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            throw new IOException("Failed to parse timer increment.", e);
+        }
+
+        return new OperatingSystem(new MemoryManager(program), new CpuManager(), new Timer(timerIncrement));
+    }
+
+    /**
+     * Parses a program from an input stream into a list of Integers.
+     */
+    public static List<Integer> parseProgram(InputStream in) throws IOException {
+        try (Scanner scanner = new Scanner(in)) {
+            // Regex matches the start of the string, any amount of whitespace, a digit, and
+            // then any characters before the end
+            return scanner.findAll(INSTRUCTION_REGEX)
+                    .map(match -> Integer.parseInt(match.group(1)))
+                    .toList();
+        }
+    }
+
+    private static final Pattern INSTRUCTION_REGEX = Pattern.compile("^\\.?(\\d+).*$", Pattern.MULTILINE);
 
     public void exit() {
         memoryManager.exit();
         cpuManager.exit();
     }
 
-    /**
-     * Loads a program into memory at address 0.
-     */
-    public void loadProgram(InputStream in) {
-        try (Scanner scanner = new Scanner(in)) {
-            // Regex matches the start of the string, any amount of whitespace, a digit, and
-            // then any characters before the end
-            List<Integer> program = scanner.findAll(INSTRUCTION_REGEX)
-                    .map(match -> Integer.parseInt(match.group(1)))
-                    .toList();
-            memoryManager.batchWrite(0, program);
-        }
-    }
+    // public void runInstruction() {
 
-    private static final Pattern INSTRUCTION_REGEX = Pattern.compile("^.?(\\d+).*$", Pattern.MULTILINE);
+    // }
 
     public int fetchInstruction() {
         return memoryManager.read(cpuManager.readRegister(Register.INSTRUCTION_REGISTER));
@@ -47,6 +77,6 @@ public class OperatingSystem {
     private MemoryManager memoryManager;
     private CpuManager cpuManager;
 
-    private OperatingMode mode;
-    // private Timer timer;
+    private OperatingMode mode = OperatingMode.USER;
+    private Timer timer;
 }
