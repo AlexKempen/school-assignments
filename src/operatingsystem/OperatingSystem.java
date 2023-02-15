@@ -43,7 +43,10 @@ public class OperatingSystem {
             throw new IOException("Failed to parse timer increment.", e);
         }
 
-        return new OperatingSystem(new MemoryManager(program), new CpuManager(), new Timer(timerIncrement));
+        OperatingSystem operatingSystem = new OperatingSystem(new MemoryManager(), new CpuManager(),
+                new Timer(timerIncrement));
+        operatingSystem.memoryManager.batchWrite(0, program);
+        return operatingSystem;
     }
 
     /**
@@ -71,6 +74,7 @@ public class OperatingSystem {
     // }
 
     public int fetchInstruction() {
+        memoryManager.write(0, 10);
         return memoryManager.read(cpuManager.readRegister(Register.INSTRUCTION_REGISTER));
     }
 

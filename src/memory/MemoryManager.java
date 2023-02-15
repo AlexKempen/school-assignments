@@ -11,9 +11,8 @@ import src.operatingsystem.Manager;
  * A class which manages a Memory inside a CommandProcess.
  */
 public class MemoryManager extends Manager<Memory> {
-    public MemoryManager(List<Integer> program) {
+    public MemoryManager() {
         super(new Memory());
-        batchWrite(0, program);
     }
 
     public void batchWrite(int address, List<Integer> data) {

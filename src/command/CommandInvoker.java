@@ -2,15 +2,13 @@ package src.command;
 
 import java.io.Serializable;
 
-import src.operatingsystem.ProcessUtils;
-
 /**
  * Executes Commands by sending them to a given CommandProcess.
  * Note the given command process assumes ownership of a given executor.
  */
 public class CommandInvoker<T extends Executor> {
-    public CommandInvoker(T executor, Process process) {
-        stream = new CommandStream(process.getInputStream(), process.getOutputStream());
+    public CommandInvoker(T executor, CommandStream stream) {
+        this.stream = stream;
         // send executor to the process
         stream.writeObject(executor);
     }
@@ -31,11 +29,13 @@ public class CommandInvoker<T extends Executor> {
         return stream.<R>castObject(object);
     }
 
+    /**
+     * Writes an exit command to the stream.
+     * Note the underlying Process may still take some time to exit.
+     */
     public void exit() {
         stream.writeObject(new ExitCommand());
-        ProcessUtils.waitForProcess(process);
     }
 
-    private Process process;
     private CommandStream stream;
 }

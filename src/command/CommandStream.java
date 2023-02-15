@@ -26,10 +26,16 @@ public class CommandStream {
         }
     }
 
+    /**
+     * Reads an Object of type T from the stream.
+     */
     public <T> T read() {
         return this.<T>castObject(readObject());
     }
 
+    /**
+     * Reads an Object from the stream.
+     */
     public Object readObject() {
         try {
             return in.readObject();
@@ -40,7 +46,7 @@ public class CommandStream {
 
 
     /**
-     * Cast an Object to a given type.
+     * Performs an unchecked cast an Object to type T.
      */
     public <T> T castObject(Object o) {
         @SuppressWarnings("unchecked")

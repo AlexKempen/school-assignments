@@ -9,12 +9,15 @@ import src.command.Executor;
  */
 public class Manager<T extends Executor> {
     protected Manager(T executor) {
-        invoker = new CommandInvoker<T>(executor, CommandProcess.startCommandProcess());
+        commandProcess = CommandProcess.startCommandProcess();
+        invoker = new CommandInvoker<T>(executor, commandProcess.getCommandStream());
     }
 
     public void exit() {
         invoker.exit();
+        ProcessUtils.waitForProcess(commandProcess.getProcess());
     }
 
+    private CommandProcess commandProcess;
     protected CommandInvoker<T> invoker;
 }
