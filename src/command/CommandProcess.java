@@ -9,7 +9,9 @@ public class CommandProcess {
      * commands on an Executor.
      */
     public static void main(String[] args) {
-        CommandStream stream = new CommandStream(System.in, System.out);
+        CommandStream stream = new CommandStream();
+        stream.addInputStream(System.in);
+        stream.addOutputStream(System.out);
         CommandReciever reciever = new CommandReciever(stream);
         reciever.processCommands();
     }
@@ -40,7 +42,10 @@ public class CommandProcess {
     private static final String[] PROCESS_COMMAND = { "java", "-cp", "out", "src/command/CommandProcess" };
 
     public CommandStream getCommandStream() {
-        return new CommandStream(process.getInputStream(), process.getOutputStream());
+        CommandStream stream = new CommandStream();
+        stream.addInputStream(process.getInputStream());
+        stream.addOutputStream(process.getOutputStream());
+        return stream;
     }
 
     public Process getProcess() {

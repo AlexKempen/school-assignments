@@ -11,13 +11,22 @@ import java.io.OutputStream;
  * serialized command objects.
  */
 public class CommandStream {
-    public CommandStream(InputStream in, OutputStream out) {
+    public void addOutputStream(OutputStream out) {
         try {
-            // out has to be constructed before in to prevent errors with stream EOF
             this.out = new ObjectOutputStream(out);
-            this.in = new ObjectInputStream(in);
         } catch (IOException e) {
-            throw new AssertionError("Failed to construct object streams.", e);
+            throw new AssertionError("Failed to construct object output stream.", e);
+        }
+    }
+
+    /**
+     * Registers an input stream.
+     */
+    public void addInputStream(InputStream in) {
+        try {
+        this.in = new ObjectInputStream(in);
+        } catch (IOException e) {
+            throw new AssertionError("Failed to construct object input stream.", e);
         }
     }
 
@@ -25,6 +34,10 @@ public class CommandStream {
      * Writes Object o to the stream.
      */
     public void writeObject(Object o) {
+        if (out == null) {
+            throw new NullPointerException("Expected Output stream to be registered.");
+        }
+
         try {
             out.writeObject(o);
             out.flush();
@@ -44,6 +57,9 @@ public class CommandStream {
      * Reads an Object from the stream.
      */
     public Object readObject() {
+        if (in == null) {
+            throw new NullPointerException("Expected Output stream to be registered.");
+        }
         try {
             return in.readObject();
         } catch (Exception e) {
@@ -69,6 +85,6 @@ public class CommandStream {
         }
     }
 
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+    private ObjectInputStream in = null;
+    private ObjectOutputStream out = null;
 }

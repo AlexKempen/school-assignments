@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -25,18 +23,17 @@ public class CommandTest {
 
     @Test
     public void TestCommandInvoker() throws ClassNotFoundException, IOException {
-        File sendFile = folder.newFile("commands.txt");
-        File receiveFile = folder.newFile("results.txt");
+        File sentCommands = folder.newFile("commands.txt");
+        File commandResults = folder.newFile("results.txt");
 
-        FileInputStream receiveStream = new FileInputStream(receiveFile);
-        FileOutputStream resultInStream = new FileOutputStream(receiveFile);
+        CommandStream receiverStream = new CommandStream();
+        CommandStream stream = new CommandStream();
 
-        FileOutputStream sendStream = new FileOutputStream(sendFile);
-        FileInputStream commandOutStream = new FileInputStream(sendFile);
+        stream.addOutputStream(new FileOutputStream(sentCommands));
+        receiverStream.addOutputStream(new FileOutputStream(commandResults));
 
-        ObjectOutputStream resultIn = new ObjectOutputStream(resultInStream);
-        CommandStream stream = new CommandStream(receiveStream, sendStream);
-        ObjectInputStream commandOut = new ObjectInputStream(commandOutStream);
+        stream.addInputStream(new FileInputStream(commandResults));
+        receiverStream.addInputStream(new FileInputStream(sentCommands));
 
         Memory memory = new Memory();
         CommandInvoker<Memory> invoker = new CommandInvoker<>(memory, stream);
@@ -47,20 +44,19 @@ public class CommandTest {
         ReadCommand readCommand = new ReadCommand(testAddress);
 
         // read executor from stream
-        Assert.assertNotNull((Memory) commandOut.readObject());
+        Assert.assertNotNull((Memory)receiverStream.readObject());
 
         invoker.send(writeCommand);
-        Assert.assertNotNull((WriteCommand) commandOut.readObject());
+        Assert.assertNotNull((WriteCommand) receiverStream.readObject());
 
         // write result before command
-        resultIn.writeObject(expected);
+        receiverStream.writeObject(expected);
         Integer result = invoker.send(readCommand);
         Assert.assertEquals(result, expected);
-        Assert.assertNotNull((ReadCommand) commandOut.readObject());
+        Assert.assertNotNull((ReadCommand) receiverStream.readObject());
 
         stream.close();
-        commandOut.close();
-        resultIn.close();
+        receiverStream.close();
     }
 
     // @Test
