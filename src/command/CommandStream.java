@@ -6,6 +6,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+/**
+ * A class wrapping an input and output stream which can be used to send
+ * serialized command objects.
+ */
 public class CommandStream {
     public CommandStream(InputStream in, OutputStream out) {
         try {
@@ -17,6 +21,9 @@ public class CommandStream {
         }
     }
 
+    /**
+     * Writes Object o to the stream.
+     */
     public void writeObject(Object o) {
         try {
             out.writeObject(o);
@@ -44,7 +51,6 @@ public class CommandStream {
         }
     }
 
-
     /**
      * Performs an unchecked cast an Object to type T.
      */
@@ -52,6 +58,15 @@ public class CommandStream {
         @SuppressWarnings("unchecked")
         T result = (T) o;
         return result;
+    }
+
+    public void close() {
+        try {
+            in.close();
+            out.close();
+        } catch (IOException e) {
+            throw new AssertionError("Failed to close command stream.", e);
+        }
     }
 
     private ObjectInputStream in;

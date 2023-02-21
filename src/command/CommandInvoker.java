@@ -35,6 +35,7 @@ public class CommandInvoker<T extends Executor> {
      */
     public void exit() {
         stream.writeObject(new ExitCommand());
+        stream.close();
     }
 
     private CommandStream stream;

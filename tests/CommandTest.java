@@ -1,61 +1,74 @@
 package tests;
 
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.junit.Assert;
+import org.junit.Rule;
 
 import src.command.CommandInvoker;
-import src.command.CommandProcess;
-import src.command.ExitCommand;
+import src.command.CommandStream;
 import src.memory.Memory;
-import src.memory.MemoryManager;
 import src.memory.command.ReadCommand;
 import src.memory.command.WriteCommand;
 
 public class CommandTest {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Test
-    public void TestExitCommand() throws IOException, InterruptedException {
-        CommandProcess commandProcess = CommandProcess.startCommandProcess();
-        Process process = commandProcess.getProcess();
-        Assert.assertTrue(process.isAlive());
+    public void TestCommandInvoker() throws ClassNotFoundException, IOException {
+        // commands get set to the inFile
+        // return value is sent to the outFile
+        File sendFile = folder.newFile("in.txt");
+        File receiveFile = folder.newFile("out.txt");
 
-        ObjectOutputStream out = new ObjectOutputStream(process.getOutputStream());
-        // write arbitrary executor
-        out.writeObject(new Memory());
-        // write exit command
-        out.writeObject(new ExitCommand());
-        process.waitFor();
+        FileInputStream receiveStream = new FileInputStream(receiveFile);
+        FileOutputStream resultInStream = new FileOutputStream(receiveFile);
 
-        Assert.assertFalse(process.isAlive());
+        FileOutputStream sendStream = new FileOutputStream(sendFile);
+        FileInputStream commandOutStream = new FileInputStream(sendFile);
+
+        ObjectOutputStream resultIn = new ObjectOutputStream(resultInStream);
+
+        CommandStream stream = new CommandStream(receiveStream, sendStream);
+
+        ObjectInputStream commandOut = new ObjectInputStream(commandOutStream);
+
+        Memory memory = new Memory();
+        CommandInvoker<Memory> invoker = new CommandInvoker<>(memory, stream);
+
+        Integer expected = 10;
+        int testAddress = 5;
+        WriteCommand writeCommand = new WriteCommand(testAddress, expected);
+        ReadCommand readCommand = new ReadCommand(testAddress);
+
+        // read executor from stream
+        Assert.assertNotNull((Memory) commandOut.readObject());
+
+        invoker.send(writeCommand);
+        Assert.assertNotNull((WriteCommand) commandOut.readObject());
+
+        // write result before command
+        resultIn.writeObject(expected);
+        Integer result = invoker.send(readCommand);
+        Assert.assertEquals(result, expected);
+        Assert.assertNotNull((ReadCommand) commandOut.readObject());
+
+        stream.close();
+        commandOut.close();
+        resultIn.close();
     }
 
     // @Test
-    // public void TestMemoryManager() {
-    //     MemoryManager manager = new MemoryManager();
+    // public void TestCommandReciever() {
 
-    //     int expected = 10;
-    //     manager.write(5, expected);
-    //     Assert.assertEquals(manager.read(5), expected);
-
-    //     manager.exit();
-    // }
-
-    // @Test
-    // public void TestCommandInvoker() {
-    //     // invoker spawns process which handles commands
-    //     Process process = CommandProcess.startCommandProcess();
-
-    //     CommandInvoker<Memory> invoker = new CommandInvoker<>(new Memory(), process);
-
-    //     Integer expected = 10;
-    //     invoker.send(new WriteCommand(5, expected));
-    //     Assert.assertEquals(invoker.send(new ReadCommand(5)), expected);
-
-    //     // test exit
-    //     invoker.exit();
-    //     Assert.assertFalse(process.isAlive());
     // }
 }
