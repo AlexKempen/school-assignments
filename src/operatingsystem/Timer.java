@@ -13,6 +13,6 @@ public class Timer {
         return current == 0;
     }
 
-    private int increment;
+    private final int increment;
     private int current = 0;
 }

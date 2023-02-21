@@ -17,6 +17,7 @@ public class CommandReciever {
         while (true) {
             Object object = stream.readObject();
             if (executeCommandObject(object)) {
+                stream.close();
                 return;
             }
         }

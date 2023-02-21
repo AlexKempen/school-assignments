@@ -1,6 +1,5 @@
 package src.operatingsystem;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -23,30 +22,10 @@ public class OperatingSystem {
     }
 
     /**
-     * A factory for an operating system.
-     * 
-     * @param args : An array of command line args of the format <program_file>
-     *             <timer_increment>.
+     * Write a program to memory.
      */
-    public static OperatingSystem startOperatingSystem(String[] args) throws IOException {
-        List<Integer> program;
-        try {
-            program = parseProgram(new FileInputStream(args[0]));
-        } catch (IOException e) {
-            throw new IOException("Failed to parse program file.", e);
-        }
-
-        int timerIncrement;
-        try {
-            timerIncrement = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            throw new IOException("Failed to parse timer increment.", e);
-        }
-
-        OperatingSystem operatingSystem = new OperatingSystem(new MemoryManager(), new CpuManager(),
-                new Timer(timerIncrement));
-        operatingSystem.memoryManager.batchWrite(0, program);
-        return operatingSystem;
+    public void loadProgram(List<Integer> program) {
+        memoryManager.batchWrite(0, program);
     }
 
     /**
@@ -56,7 +35,7 @@ public class OperatingSystem {
         try (Scanner scanner = new Scanner(in)) {
             // Regex matches the start of the string, any amount of whitespace, a digit, and
             // then any characters before the end
-            return scanner.findAll(INSTRUCTION_REGEX)
+             return scanner.findAll(INSTRUCTION_REGEX)
                     .map(match -> Integer.parseInt(match.group(1)))
                     .toList();
         }

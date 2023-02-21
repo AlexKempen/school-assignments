@@ -65,7 +65,7 @@ public class CommandStream {
             in.close();
             out.close();
         } catch (IOException e) {
-            throw new AssertionError("Failed to close command stream.", e);
+            throw new AssertionError("Failed to close command streams.", e);
         }
     }
 

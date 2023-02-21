@@ -15,7 +15,7 @@ import src.operatingsystem.OperatingSystem;
 public class OperatingSystemTest {
     @Test
     public void testParseProgram() throws IOException {
-        String test = "25 Hello\n.10 Ahh\n.15";
+        String test = "25 // Some comment\n.10 Comment\n.15";
         List<Integer> expected = Arrays.asList(25, 10, 15);
 
         InputStream inputStream = new ByteArrayInputStream(test.getBytes());
