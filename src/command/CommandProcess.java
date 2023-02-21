@@ -12,7 +12,7 @@ public class CommandProcess {
         CommandStream stream = new CommandStream();
         stream.addInputStream(System.in);
         stream.addOutputStream(System.out);
-        CommandReciever reciever = new CommandReciever(stream);
+        CommandReceiver reciever = new CommandReceiver(stream);
         reciever.processCommands();
     }
 

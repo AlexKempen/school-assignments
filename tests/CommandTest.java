@@ -8,11 +8,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 
 import src.command.CommandInvoker;
+import src.command.CommandReceiver;
 import src.command.CommandStream;
+import src.command.ExitCommand;
 import src.memory.Memory;
 import src.memory.command.ReadCommand;
 import src.memory.command.WriteCommand;
@@ -21,22 +25,34 @@ public class CommandTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    @Test
-    public void TestCommandInvoker() throws ClassNotFoundException, IOException {
+    @Before
+    public void initializeCommandStreams() throws IOException {
         File sentCommands = folder.newFile("commands.txt");
         File commandResults = folder.newFile("results.txt");
 
-        CommandStream receiverStream = new CommandStream();
-        CommandStream stream = new CommandStream();
+        receiverStream = new CommandStream();
+        invokerStream = new CommandStream();
 
-        stream.addOutputStream(new FileOutputStream(sentCommands));
+        invokerStream.addOutputStream(new FileOutputStream(sentCommands));
         receiverStream.addOutputStream(new FileOutputStream(commandResults));
 
-        stream.addInputStream(new FileInputStream(commandResults));
+        invokerStream.addInputStream(new FileInputStream(commandResults));
         receiverStream.addInputStream(new FileInputStream(sentCommands));
+    }
 
+    @After
+    public void closeCommandStreams() {
+        invokerStream.close();
+        receiverStream.close();
+    }
+
+    public CommandStream invokerStream;
+    public CommandStream receiverStream;
+
+    @Test
+    public void TestCommandInvoker() {
         Memory memory = new Memory();
-        CommandInvoker<Memory> invoker = new CommandInvoker<>(memory, stream);
+        CommandInvoker<Memory> invoker = new CommandInvoker<>(memory, invokerStream);
 
         Integer expected = 10;
         int testAddress = 5;
@@ -54,13 +70,22 @@ public class CommandTest {
         Integer result = invoker.send(readCommand);
         Assert.assertEquals(result, expected);
         Assert.assertNotNull((ReadCommand) receiverStream.readObject());
-
-        stream.close();
-        receiverStream.close();
     }
 
-    // @Test
-    // public void TestCommandReciever() {
+    @Test
+    public void TestCommandReceiver() {
+        invokerStream.writeObject(new Memory());
 
-    // }
+        CommandReceiver receiver = new CommandReceiver(receiverStream);
+
+        Integer expected = 10;
+        int testAddress = 5;
+        invokerStream.writeObject( new WriteCommand(testAddress, expected));
+        invokerStream.writeObject(new ReadCommand(testAddress));
+        invokerStream.writeObject(new ExitCommand());
+        
+        receiver.processCommands();
+
+        Assert.assertEquals(expected, invokerStream.readObject());
+    }
 }

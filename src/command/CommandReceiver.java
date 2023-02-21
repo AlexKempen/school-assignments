@@ -7,8 +7,8 @@ package src.command;
  * executor; it recieves an output stream which
  * can be used to stream data back to the CommandInvoker.
  */
-public class CommandReciever {
-    public CommandReciever(CommandStream stream) {
+public class CommandReceiver {
+    public CommandReceiver(CommandStream stream) {
         this.stream = stream;
         executor = stream.<Executor>read();
     }
