@@ -14,10 +14,6 @@ class Main {
         OperatingSystem operatingSystem = startOperatingSystem(args);
 
         // System.out.println(operatingSystem.fetchInstruction());
-        MemoryManager memory = new MemoryManager();
-        memory.write(10, 5);
-        System.out.println(memory.read(10));
-
     }
 
     public static OperatingSystem startOperatingSystem(String[] args) throws IOException {

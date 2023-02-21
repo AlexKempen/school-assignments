@@ -25,10 +25,8 @@ public class CommandTest {
 
     @Test
     public void TestCommandInvoker() throws ClassNotFoundException, IOException {
-        // commands get set to the inFile
-        // return value is sent to the outFile
-        File sendFile = folder.newFile("in.txt");
-        File receiveFile = folder.newFile("out.txt");
+        File sendFile = folder.newFile("commands.txt");
+        File receiveFile = folder.newFile("results.txt");
 
         FileInputStream receiveStream = new FileInputStream(receiveFile);
         FileOutputStream resultInStream = new FileOutputStream(receiveFile);
@@ -37,9 +35,7 @@ public class CommandTest {
         FileInputStream commandOutStream = new FileInputStream(sendFile);
 
         ObjectOutputStream resultIn = new ObjectOutputStream(resultInStream);
-
         CommandStream stream = new CommandStream(receiveStream, sendStream);
-
         ObjectInputStream commandOut = new ObjectInputStream(commandOutStream);
 
         Memory memory = new Memory();
