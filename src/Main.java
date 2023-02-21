@@ -6,6 +6,7 @@ import java.util.List;
 
 import src.cpu.CpuManager;
 import src.memory.MemoryManager;
+import src.operatingsystem.CpuInterface;
 import src.operatingsystem.OperatingSystem;
 import src.operatingsystem.Timer;
 
@@ -23,7 +24,7 @@ class Main {
 
         List<Integer> program;
         try {
-            program = OperatingSystem.parseProgram(new FileInputStream(args[0]));
+            program = CpuInterface.parseProgram(new FileInputStream(args[0]));
         } catch (IOException e) {
             throw new IOException("Failed to parse program file.", e);
         }
@@ -35,11 +36,8 @@ class Main {
             throw new IOException("Failed to parse timer increment.", e);
         }
 
-        OperatingSystem operatingSystem = new OperatingSystem(new MemoryManager(), new CpuManager(),
-                new Timer(timerIncrement));
-
-        operatingSystem.loadProgram(program);
-
-        return operatingSystem;
+        CpuInterface cpuInterface = new CpuInterface(new MemoryManager(), new CpuManager());
+        cpuInterface.loadProgram(program);
+        return new OperatingSystem(cpuInterface, new Timer(timerIncrement));
     }
 }

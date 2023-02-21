@@ -6,5 +6,5 @@ public enum Register {
     INSTRUCTION_REGISTER,
     ACCUMULATOR,
     X,
-    Y
+    Y;
 }
