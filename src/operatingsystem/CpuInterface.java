@@ -38,11 +38,6 @@ public class CpuInterface {
 
     private static final Pattern INSTRUCTION_REGEX = Pattern.compile("^\\.?(\\d+)", Pattern.MULTILINE);
 
-    public void exit() {
-        memoryManager.exit();
-        cpuManager.exit();
-    }
-
     public Instruction fetchNextInstruction() {
         return Instruction.getInstruction(fetchNext());
     }

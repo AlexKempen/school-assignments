@@ -4,16 +4,16 @@ import src.operatingsystem.ProcessUtils;
 
 public class CommandProcess {
     /**
-     * The main function of a CommandReciever process.
-     * Uses a CommandReciever object to repeatedly execute
+     * The main function of a CommandReceiver process.
+     * Uses a CommandReceiver object to repeatedly execute
      * commands on an Executor.
      */
     public static void main(String[] args) {
         CommandStream stream = new CommandStream();
         stream.addInputStream(System.in);
         stream.addOutputStream(System.out);
-        CommandReceiver reciever = new CommandReceiver(stream);
-        reciever.processCommands();
+        CommandReceiver receiver = new CommandReceiver(stream);
+        receiver.processCommands();
     }
 
     public CommandProcess(Process process) {
@@ -41,15 +41,15 @@ public class CommandProcess {
 
     private static final String[] PROCESS_COMMAND = { "java", "-cp", "out", "src/command/CommandProcess" };
 
-    public CommandStream getCommandStream() {
+    public CommandStream makeCommandStream() {
         CommandStream stream = new CommandStream();
-        stream.addInputStream(process.getInputStream());
         stream.addOutputStream(process.getOutputStream());
+        stream.addInputStream(process.getInputStream());
         return stream;
     }
 
-    public Process getProcess() {
-        return process;
+    public void waitForProcess() {
+        ProcessUtils.waitForProcess(process);
     }
 
     private Process process;

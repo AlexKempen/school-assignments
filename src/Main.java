@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import src.command.CommandProcess;
 import src.cpu.CpuManager;
 import src.memory.MemoryManager;
 import src.operatingsystem.CpuInterface;
@@ -36,7 +37,8 @@ class Main {
             throw new IOException("Failed to parse timer increment.", e);
         }
 
-        CpuInterface cpuInterface = new CpuInterface(new MemoryManager(), new CpuManager());
+        ManagerFactory managerFactory = new ManagerFactory();
+        CpuInterface cpuInterface = new CpuInterface(managerFactory.makeMemoryManager(), managerFactory.makeCpuManager());
         cpuInterface.loadProgram(program);
         return new OperatingSystem(cpuInterface, new Timer(timerIncrement));
     }

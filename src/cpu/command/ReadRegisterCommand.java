@@ -11,7 +11,8 @@ public class ReadRegisterCommand extends ResultCommand<Cpu, Integer> {
 
     @Override
     public Integer execute(Cpu cpu) {
-        return cpu.registers.read(register);
+        return 0;
+        // return cpu.registers.read(register);
     }
 
     private Register register;

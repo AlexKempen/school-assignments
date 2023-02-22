@@ -12,7 +12,7 @@ public class WriteRegisterCommand extends Command<Cpu> {
 
     @Override
     public void execute(Cpu cpu) {
-        cpu.registers.write(register, data);
+        // cpu.registers.write(register, data);
     }
 
     private Register register;

@@ -10,14 +10,13 @@ public class OperatingSystem {
     }
 
     public void exit() {
-        cpuInterface.exit();
+        // cpuInterface.exit();
     }
 
     // public int fetchInstruction() {
     //     memoryManager.write(0, 10);
     //     return memoryManager.read(cpuManager.readRegister(Register.INSTRUCTION_REGISTER));
     // }
-
 
     private CpuInterface cpuInterface;
     private OperatingMode mode = OperatingMode.USER;

@@ -8,14 +8,14 @@ import src.command.Executor;
  * A generic base class for managing a CommandProcess via a CommandInvoker.
  */
 public class Manager<T extends Executor> {
-    protected Manager(T executor) {
-        commandProcess = CommandProcess.startCommandProcess();
-        invoker = new CommandInvoker<T>(executor, commandProcess.getCommandStream());
+    protected Manager(CommandInvoker<T> invoker, CommandProcess commandProcess) {
+        this.commandProcess = commandProcess;
+        this.invoker = invoker;
     }
 
     public void exit() {
         invoker.exit();
-        ProcessUtils.waitForProcess(commandProcess.getProcess());
+        commandProcess.waitForProcess();
     }
 
     private CommandProcess commandProcess;
