@@ -45,6 +45,14 @@ public class Registers {
         }
     }
 
+    public void setAccumulator(int value) {
+        accumulator = value;
+    }
+
+    public int getAccumulator() {
+        return accumulator;
+    }
+
     /**
      * @return the value of the program counter prior to incrementing.
      */
