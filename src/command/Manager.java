@@ -1,11 +1,10 @@
 package src.command;
 
 /**
- * A generic base class for managing a CommandProcess via a CommandInvoker.
+ * A generic base class for managing an executor via a CommandInvoker.
  */
 public class Manager<T extends Executor> {
-    protected Manager(CommandInvoker<T> invoker, CommandProcess commandProcess) {
-        this.commandProcess = commandProcess;
+    protected Manager(CommandInvoker<T> invoker) {
         this.invoker = invoker;
     }
 
@@ -14,9 +13,7 @@ public class Manager<T extends Executor> {
      */
     public void exit() {
         invoker.exit();
-        commandProcess.waitForProcess();
     }
 
-    private CommandProcess commandProcess;
     protected CommandInvoker<T> invoker;
 }

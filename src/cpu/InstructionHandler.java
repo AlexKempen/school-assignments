@@ -1,13 +1,21 @@
 package src.cpu;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Random;
 
-import src.memory.MemoryManager;
+import src.memory.MemoryInterface;
 
 public class InstructionHandler {
-    public InstructionHandler(Registers registers, MemoryManager memory) {
+    /**
+     * @param random A random generator to get numbers from.
+     *               Taken as an argument to facilitate testing with a known seed.
+     */
+    public InstructionHandler(Registers registers, MemoryInterface memory, Random random, OutputStream out) {
         this.registers = registers;
         this.memory = memory;
+        this.random = random;
+        this.out = new PrintWriter(out);
     }
 
     public void fetchInstruction() {
@@ -28,16 +36,32 @@ public class InstructionHandler {
         Instruction instruction = Instruction.getInstruction(registers.read(Register.INSTRUCTION_REGISTER));
         switch (instruction) {
             case LOAD_VALUE:
-                loadValue();
+                load(fetchNext());
                 break;
             case LOAD_ADDRESS:
-                loadAddress();
+                loadAddress(fetchNext());
                 break;
-            case LOAD_INDEX_ADDRESS:
-            loadIndexAddress();
-            break;
+            case LOAD_INDEX:
+                loadAddress(memory.read(fetchNext()));
+                break;
+            case LOAD_INDEX_X:
+                loadIndex(fetchNext(), Register.X);
+                break;
+            case LOAD_INDEX_Y:
+                loadIndex(fetchNext(), Register.Y);
+                break;
+            case LOAD_STACK_POINTER_X:
+                loadIndex(registers.read(Register.STACK_POINTER), Register.X);
+                break;
+            case STORE:
+                memory.write(fetchNext(), registers.getAccumulator());
+                break;
             case GET:
                 get();
+                break;
+            case PUT:
+                put();
+                break;
             case ADD_X:
                 add(Register.X);
                 break;
@@ -50,8 +74,52 @@ public class InstructionHandler {
             case SUB_Y:
                 sub(Register.Y);
                 break;
+            case COPY_TO_X:
+                registers.write(Register.X, registers.getAccumulator());
+                break;
+            case COPY_FROM_X:
+                registers.setAccumulator(registers.read(Register.X));
+                break;
+            case COPY_TO_Y:
+                registers.write(Register.Y, registers.getAccumulator());
+                break;
+            case COPY_FROM_Y:
+                registers.setAccumulator(registers.read(Register.Y));
+                break;
+            case COPY_TO_STACK_POINTER:
+                registers.write(Register.STACK_POINTER, registers.getAccumulator());
+                break;
+            case COPY_FROM_STACK_POINTER:
+                registers.setAccumulator(registers.read(Register.STACK_POINTER));
+                break;
+            case JUMP:
+                jump();
+                break;
+            case JUMP_IF_EQUAL:
+                conditionalJump(registers.getAccumulator() == 0);
+                break;
+            case JUMP_IF_NOT_EQUAL:
+                conditionalJump(registers.getAccumulator() != 0);
+                break;
+            case CALL:
+                call();
+                break;
+            case RETURN:
+                ret();
+                break;
+            case INCREMENT_X:
+                registers.increment(Register.X, 1);
+            case DECREMENT_X:
+                registers.increment(Register.X, -1);
+            case PUSH:
+                push();
+            case POP:
+                pop();
+            case SYSTEM_CALL:
+                systemCall();
+            case SYSTEM_CALL_RETURN:
+                systemCallReturn();
             case EXIT:
-                exit();
                 return true;
             default:
                 throw new AssertionError("The specified instruction is not implemented.");
@@ -59,23 +127,32 @@ public class InstructionHandler {
         return false;
     }
 
-    private void loadValue() {
-        registers.setAccumulator(fetchNext());
+    private void load(int value) {
+        registers.setAccumulator(value);
     }
 
-    // todo: memory protection
-    private void loadAddress() {
-        registers.setAccumulator(memory.read(fetchNext()));
+    private void loadAddress(int address) {
+        load(memory.read(address));
     }
 
-    private void loadIndexAddress() {
-        int address = memory.read(fetchNext());
-        registers.setAccumulator(memory.read(address));
+    private void loadIndex(int value, Register register) {
+        loadAddress(value + memory.read(registers.read(register)));
     }
 
     private void get() {
-        Random random = new Random();
         registers.setAccumulator(random.nextInt(1, 101));
+    }
+
+    private void put() {
+        int port = fetchNext();
+        int value = registers.getAccumulator();
+        if (port == 1) {
+            out.print(value);
+        } else if (port == 2) {
+            out.print((char) value);
+        } else {
+            throw new AssertionError("Invalid port number - expected 1 or 2.");
+        }
     }
 
     private void add(Register register) {
@@ -86,9 +163,42 @@ public class InstructionHandler {
         registers.increment(Register.ACCUMULATOR, -registers.read(register));
     }
 
-    private void exit() {
-        // terminate memory process
-        memory.exit();
+    private void jump() {
+        registers.write(Register.PROGRAM_COUNTER, fetchNext());
+    }
+
+    private void conditionalJump(boolean condition) {
+        // cannot be ternary due to void
+        if (condition) {
+            jump();
+        } else {
+            // always fetch and discard address
+            fetchNext();
+        }
+    }
+
+    private void call() {
+
+    }
+
+    private void ret() {
+
+    }
+
+    private void push() {
+
+    }
+
+    private void pop() {
+
+    }
+
+    private void systemCall() {
+
+    }
+
+    private void systemCallReturn() {
+
     }
 
     public void interrupt() {
@@ -96,5 +206,7 @@ public class InstructionHandler {
     }
 
     private Registers registers;
-    private MemoryManager memory;
+    private MemoryInterface memory;
+    private Random random;
+    private PrintWriter out;
 }

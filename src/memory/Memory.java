@@ -7,11 +7,13 @@ import src.command.Executor;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Memory extends Executor {
-    public Integer read(int address) {
+public class Memory extends Executor implements MemoryInterface {
+    @Override
+    public int read(int address) {
         return memory.get(address);
     }
 
+    @Override
     public void write(int address, int data) {
         memory.set(address, data);
     }
