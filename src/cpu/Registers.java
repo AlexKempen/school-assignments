@@ -54,10 +54,13 @@ public class Registers {
     }
 
     /**
-     * @return the value of the program counter prior to incrementing.
+     * Increments a register by a given amount.
+     * @return The value of the register prior to incrementing.
      */
-    public int incrementProgramCounter() {
-        return programCounter++;
+    public int increment(Register register, int amount) {
+        int value = read(register);
+        write(register, value + amount);
+        return value;
     }
 
     private int programCounter;

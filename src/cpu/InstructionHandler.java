@@ -15,7 +15,7 @@ public class InstructionHandler {
     }
 
     private int fetchNext() {
-        return memory.read(registers.incrementProgramCounter());
+        return memory.read(registers.increment(Register.PROGRAM_COUNTER, 1));
     }
 
     /**
@@ -79,12 +79,11 @@ public class InstructionHandler {
     }
 
     private void add(Register register) {
-        registers.setAccumulator(registers.getAccumulator() + registers.read(register));
+        registers.increment(Register.ACCUMULATOR, registers.read(register));
     }
 
-
     private void sub(Register register) {
-        registers.setAccumulator(registers.getAccumulator() - registers.read(register));
+        registers.increment(Register.ACCUMULATOR, -registers.read(register));
     }
 
     private void exit() {
