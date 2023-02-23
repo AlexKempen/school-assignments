@@ -45,6 +45,13 @@ public class Registers {
         }
     }
 
+    /**
+     * @return the value of the program counter prior to incrementing.
+     */
+    public int incrementProgramCounter() {
+        return programCounter++;
+    }
+
     private int programCounter;
     private int stackPointer;
     private int instructionRegister;

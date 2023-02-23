@@ -2,9 +2,9 @@ package src.command;
 
 /**
  * A class defining a generic receiver for Commands
- * which recieves them from an ObjectInputStream.
+ * which receives them from an ObjectInputStream.
  * The first object in the ObjectInputStream is the
- * executor; it recieves an output stream which
+ * executor; it receives an output stream which
  * can be used to stream data back to the CommandInvoker.
  */
 public class CommandReceiver {

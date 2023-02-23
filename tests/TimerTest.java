@@ -1,9 +1,10 @@
 package tests;
 
 import org.junit.Test;
-import org.junit.Assert;
 
-import src.operatingsystem.Timer;
+import src.cpu.Timer;
+
+import org.junit.Assert;
 
 public class TimerTest {
     @Test

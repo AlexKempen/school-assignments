@@ -1,7 +1,5 @@
 package src.command;
 
-import src.operatingsystem.ProcessUtils;
-
 public class CommandProcess {
     /**
      * The main function of a CommandReceiver process.

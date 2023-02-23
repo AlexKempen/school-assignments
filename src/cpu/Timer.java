@@ -1,4 +1,4 @@
-package src.operatingsystem;
+package src.cpu;
 public class Timer {
     public Timer(int increment) {
         this.increment = increment;

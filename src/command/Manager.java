@@ -1,8 +1,4 @@
-package src.operatingsystem;
-
-import src.command.CommandInvoker;
-import src.command.CommandProcess;
-import src.command.Executor;
+package src.command;
 
 /**
  * A generic base class for managing a CommandProcess via a CommandInvoker.

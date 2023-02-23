@@ -1,10 +1,8 @@
-package src.operatingsystem;
-
-import src.cpu.Register;
+package src.cpu;
 
 public class InstructionManager {
-    public InstructionManager(CpuInterface cpuInterface) {
-        this.cpuInterface = cpuInterface;
+    public InstructionManager(Cpu cpu) {
+        this.cpu = cpu;
     }
 
     public void executeInstruction(Instruction instruction) {
@@ -17,8 +15,8 @@ public class InstructionManager {
     }
 
     private void loadAddress() {
-        cpuInterface.setRegister(Register.ACCUMULATOR, cpuInterface.fetchNext());
+        cpu.setRegister(Register.ACCUMULATOR, cpu.fetchNext());
     }
 
-    private CpuInterface cpuInterface;
+    private Cpu cpu;
 }

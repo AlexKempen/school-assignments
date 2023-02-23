@@ -1,4 +1,4 @@
-package src.operatingsystem;
+package src.command;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Utilities for starting processes.
  */
-public class ProcessUtils {
+public abstract class ProcessUtils {
     /**
      * Compiles the project using javac.
      * Repeated invocations of compile() will have no effect;

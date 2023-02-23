@@ -4,10 +4,10 @@ import java.util.List;
 
 import src.command.CommandInvoker;
 import src.command.CommandProcess;
+import src.command.Manager;
 import src.memory.command.BatchWriteCommand;
 import src.memory.command.ReadCommand;
 import src.memory.command.WriteCommand;
-import src.operatingsystem.Manager;
 
 /**
  * A class which manages a Memory inside a CommandProcess.

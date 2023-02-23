@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import org.junit.Assert;
+import src.cpu.Cpu;
 
-import src.operatingsystem.CpuInterface;
+import org.junit.Assert;
 
 public class OperatingSystemTest {
     @Test
@@ -20,7 +20,7 @@ public class OperatingSystemTest {
         List<Integer> expected = Arrays.asList(25, 10, 15);
 
         InputStream inputStream = new ByteArrayInputStream(test.getBytes());
-        List<Integer> result = CpuInterface.parseProgram(inputStream);
+        List<Integer> result = Cpu.parseProgram(inputStream);
         Assert.assertArrayEquals(expected.toArray(), result.toArray());
     }
 }
