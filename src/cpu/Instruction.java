@@ -7,7 +7,9 @@ public enum Instruction {
     // Load address + X into AC
     LOAD_ADDRESS_INDEX_TO_X(4),
     // Load address + Y into AC
-    LOAD_ADDRESS_INDEX_TO_Y(5);
+    LOAD_ADDRESS_INDEX_TO_Y(5),
+
+    EXIT(30);
 
     private Instruction(int value) {
         this.value = value;

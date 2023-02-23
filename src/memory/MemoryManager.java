@@ -17,6 +17,10 @@ public class MemoryManager extends Manager<Memory> {
         super(invoker, commandProcess);
     }
 
+    public void loadProgram(List<Integer> program) {
+        batchWrite(0, program);
+    }
+
     public void batchWrite(int address, List<Integer> data) {
         invoker.send(new BatchWriteCommand(address, data));
     }

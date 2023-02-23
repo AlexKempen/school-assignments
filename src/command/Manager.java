@@ -9,6 +9,9 @@ public class Manager<T extends Executor> {
         this.invoker = invoker;
     }
 
+    /**
+     * Causes the command process to exit.
+     */
     public void exit() {
         invoker.exit();
         commandProcess.waitForProcess();
