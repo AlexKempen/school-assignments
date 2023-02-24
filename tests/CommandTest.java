@@ -1,17 +1,17 @@
 package tests;
 
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
+import java.nio.file.Path;
 
 import src.command.CommandInvoker;
 import src.command.CommandReceiver;
@@ -22,13 +22,10 @@ import src.memory.command.ReadCommand;
 import src.memory.command.WriteCommand;
 
 public class CommandTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
-    @Before
-    public void initializeCommandStreams() throws IOException {
-        File sentCommands = folder.newFile("commands.txt");
-        File commandResults = folder.newFile("results.txt");
+    @BeforeEach
+    public void initializeCommandStreams(@TempDir Path folder) throws IOException {
+        File sentCommands = folder.resolve("commands.txt").toFile();
+        File commandResults = folder.resolve("results.txt").toFile();
 
         receiverStream = new CommandStream();
         invokerStream = new CommandStream();
@@ -40,7 +37,7 @@ public class CommandTest {
         receiverStream.addInputStream(new FileInputStream(sentCommands));
     }
 
-    @After
+    @AfterEach
     public void closeCommandStreams() {
         invokerStream.close();
         receiverStream.close();
@@ -60,16 +57,16 @@ public class CommandTest {
         ReadCommand readCommand = new ReadCommand(testAddress);
 
         // read executor from stream
-        Assert.assertNotNull((Memory)receiverStream.readObject());
+        assertNotNull((Memory) receiverStream.readObject());
 
         invoker.send(writeCommand);
-        Assert.assertNotNull((WriteCommand) receiverStream.readObject());
+        assertNotNull((WriteCommand) receiverStream.readObject());
 
         // write result before command
         receiverStream.writeObject(expected);
         Integer result = invoker.send(readCommand);
-        Assert.assertEquals(result, expected);
-        Assert.assertNotNull((ReadCommand) receiverStream.readObject());
+        assertEquals(result, expected);
+        assertNotNull((ReadCommand) receiverStream.readObject());
     }
 
     @Test
@@ -80,12 +77,12 @@ public class CommandTest {
 
         Integer expected = 10;
         int testAddress = 5;
-        invokerStream.writeObject( new WriteCommand(testAddress, expected));
+        invokerStream.writeObject(new WriteCommand(testAddress, expected));
         invokerStream.writeObject(new ReadCommand(testAddress));
         invokerStream.writeObject(new ExitCommand());
-        
+
         receiver.processCommands();
 
-        Assert.assertEquals(expected, invokerStream.readObject());
+        assertEquals(expected, invokerStream.readObject());
     }
 }

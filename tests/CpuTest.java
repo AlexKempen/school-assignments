@@ -1,13 +1,13 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 import src.Main;
 
@@ -19,6 +19,6 @@ public class CpuTest {
 
         InputStream inputStream = new ByteArrayInputStream(test.getBytes());
         List<Integer> result = Main.parseProgram(inputStream);
-        Assert.assertArrayEquals(expected.toArray(), result.toArray());
+        assertArrayEquals(expected.toArray(), result.toArray());
     }
 }

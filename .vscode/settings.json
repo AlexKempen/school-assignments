@@ -1,8 +1,11 @@
 {
     "java.debug.settings.onBuildFailureProceed": true,
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/home/alex/git/junit-platform-console-standalone-1.9.2.jar"
+    ],
     "cSpell.words": [
         "javac",
         "operatingsystem"
     ]
-
 }

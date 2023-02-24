@@ -1,5 +1,7 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,9 +14,9 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import src.CpuFactory;
 import src.Main;
@@ -22,7 +24,7 @@ import src.cpu.Cpu;
 import src.memory.Memory;
 
 public class MainTest {
-    @Before
+    @BeforeEach
     public void setupCpu() throws IOException {
         // workingDir = Path.of("", "tests/testcases");
 
@@ -43,14 +45,18 @@ public class MainTest {
     private IntStream inputs;
     private Scanner in;
 
-    @Test(timeout = 500)
-    public void testProgram() throws FileNotFoundException, IOException {
-        URL url = this.getClass().getResource("/tests/resources/test1.txt");
-        File file = new File(url.getFile());
+    public File getFile(String fileName) {
+        URL url = this.getClass().getResource("/tests/resources/" + fileName);
+        return new File(url.getFile());
+    }
 
+    @ParameterizedTest
+    @ValueSource(strings = { "test1.txt" })
+    public void testProgram(String fileName) throws FileNotFoundException, IOException {
+        File file = getFile(fileName);
         List<Integer> program = Main.parseProgram(new FileInputStream(file));
         Cpu cpu = factory.makeCpu(program, Integer.MAX_VALUE);
         cpu.executeProgram();
-        Assert.assertEquals(inputs.limit(3).sum(), in.nextInt());
+        assertEquals(inputs.limit(3).sum(), in.nextInt());
     }
 }

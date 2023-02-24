@@ -2,19 +2,18 @@ package src.cpu;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Random;
+import java.util.Iterator;
 
 import src.memory.MemoryInterface;
 
 public class InstructionHandler {
     /**
-     * @param random A random generator to get numbers from.
-     *               Taken as an argument to facilitate testing with a known seed.
+     * @param input : An iterator pointing at a stream of random integers ranging from 1 to 100.
      */
-    public InstructionHandler(Registers registers, MemoryInterface memory, Random random, OutputStream out) {
+    public InstructionHandler(Registers registers, MemoryInterface memory, Iterator<Integer> input, OutputStream out) {
         this.registers = registers;
         this.memory = memory;
-        this.random = random;
+        this.input = input;
         this.out = new PrintWriter(out, true);
     }
 
@@ -140,7 +139,7 @@ public class InstructionHandler {
     }
 
     private void get() {
-        registers.setAccumulator(random.nextInt(1, 101));
+        registers.setAccumulator(input.next());
     }
 
     private void put() {
@@ -209,6 +208,6 @@ public class InstructionHandler {
     private Registers registers;
     private MemoryInterface memory;
 
-    private Random random;
+    private Iterator<Integer> input;
     private PrintWriter out;
 }
