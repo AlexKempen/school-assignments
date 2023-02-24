@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,12 +52,16 @@ public class MainTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "test1.txt" })
+    @ValueSource(strings = { "test1.txt", "1.txt" })
     public void testProgram(String fileName) throws FileNotFoundException, IOException {
         File file = getFile(fileName);
         List<Integer> program = Main.parseProgram(new FileInputStream(file));
         Cpu cpu = factory.makeCpu(program, Integer.MAX_VALUE);
+
         cpu.executeProgram();
-        assertEquals(inputs.limit(3).sum(), in.nextInt());
+
+        if (fileName.equals("test1.txt")) {
+            assertEquals(inputs.limit(3).sum(), in.nextInt());
+        }
     }
 }
