@@ -19,7 +19,6 @@ public class Cpu {
         }
     }
 
-    private OperatingMode mode = OperatingMode.USER;
     private Timer timer;
     private InstructionHandler handler;
 }

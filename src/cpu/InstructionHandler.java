@@ -15,7 +15,7 @@ public class InstructionHandler {
         this.registers = registers;
         this.memory = memory;
         this.random = random;
-        this.out = new PrintWriter(out);
+        this.out = new PrintWriter(out, true);
     }
 
     public void fetchInstruction() {
@@ -147,9 +147,9 @@ public class InstructionHandler {
         int port = fetchNext();
         int value = registers.getAccumulator();
         if (port == 1) {
-            out.print(value);
+            out.println(value);
         } else if (port == 2) {
-            out.print((char) value);
+            out.println((char) value);
         } else {
             throw new AssertionError("Invalid port number - expected 1 or 2.");
         }
@@ -205,8 +205,10 @@ public class InstructionHandler {
 
     }
 
+    private OperatingMode mode = OperatingMode.USER;
     private Registers registers;
     private MemoryInterface memory;
+
     private Random random;
     private PrintWriter out;
 }

@@ -11,7 +11,7 @@ import src.cpu.Cpu;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Cpu cpu = startCpu(args);
+        Cpu cpu = startCpu(getCpuFactory(), args);
         cpu.executeProgram();
     }
 
@@ -30,7 +30,13 @@ public class Main {
 
     private static final Pattern INSTRUCTION_REGEX = Pattern.compile("^\\.?(\\d+)", Pattern.MULTILINE);
 
-    public static Cpu startCpu(String[] args) throws IOException {
+    public static CpuFactory getCpuFactory() {
+        CpuFactory factory = new CpuFactory();
+        factory.setMemoryManager();
+        return factory;
+    }
+
+    public static Cpu startCpu(CpuFactory factory, String[] args) throws IOException {
         if (args.length != 2) {
             throw new IOException("Expected two arguments.");
         }
@@ -49,6 +55,6 @@ public class Main {
             throw new IOException("Failed to parse timer increment.", e);
         }
 
-        return new CpuFactory().makeCpu(program, timerIncrement);
+        return factory.makeCpu(program, timerIncrement);
     }
 }
