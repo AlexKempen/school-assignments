@@ -34,8 +34,7 @@ public class CpuFactory {
 
     public void setMemoryManager() {
         CommandProcess commandProcess = CommandProcess.startCommandProcess();
-        memory = new MemoryManager(
-                new CommandInvoker<Memory>(new Memory(), commandProcess.makeCommandStream()));
+        memory = new MemoryManager(new CommandInvoker<Memory>(new Memory(), commandProcess.makeCommandStream()));
     }
 
     public Cpu makeCpu(List<Integer> program, int timerIncrement) {

@@ -1,0 +1,16 @@
+1 // Load H
+72
+9 // put
+2 
+1 // Load I
+73
+9 // put
+2
+50 // exit
+
+.1000 // timer routine
+1 // Load new line
+10
+9 
+2
+30 // return

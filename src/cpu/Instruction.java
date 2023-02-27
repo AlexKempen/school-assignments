@@ -29,8 +29,8 @@ public enum Instruction {
     DECREMENT_X(26),
     PUSH(27),
     POP(28),
-    SYSTEM_CALL(29),
-    SYSTEM_CALL_RETURN(30),
+    INTERRUPT(29),
+    INTERRUPT_RETURN(30),
     EXIT(50);
 
     private Instruction(int value) {

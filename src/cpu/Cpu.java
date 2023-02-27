@@ -14,7 +14,8 @@ public class Cpu {
             }
 
             if (timer.poll()) {
-                handler.interrupt();
+                // handler.setInstruction(Instruction.INTERRUPT);
+                // handler.interrupt();
             }
         }
     }

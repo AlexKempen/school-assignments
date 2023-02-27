@@ -3,12 +3,12 @@ package src.cpu;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
-
 import src.memory.MemoryInterface;
 
 public class InstructionHandler {
     /**
-     * @param input : An iterator pointing at a stream of random integers ranging from 1 to 100.
+     * @param input : An iterator pointing at a stream of random integers ranging
+     *              from 1 to 100.
      */
     public InstructionHandler(Registers registers, MemoryInterface memory, Iterator<Integer> input, OutputStream out) {
         this.registers = registers;
@@ -92,13 +92,13 @@ public class InstructionHandler {
                 registers.setAccumulator(registers.read(Register.STACK_POINTER));
                 break;
             case JUMP:
-                jump();
+                jump(fetchNext());
                 break;
             case JUMP_IF_EQUAL:
-                conditionalJump(registers.getAccumulator() == 0);
+                conditionalJump(registers.getAccumulator() == 0, fetchNext());
                 break;
             case JUMP_IF_NOT_EQUAL:
-                conditionalJump(registers.getAccumulator() != 0);
+                conditionalJump(registers.getAccumulator() != 0, fetchNext());
                 break;
             case CALL:
                 call();
@@ -114,11 +114,13 @@ public class InstructionHandler {
                 push();
             case POP:
                 pop();
-            case SYSTEM_CALL:
-                systemCall();
-            case SYSTEM_CALL_RETURN:
-                systemCallReturn();
+            case INTERRUPT:
+                // execute at 1500
+                interrupt(1500);
+            case INTERRUPT_RETURN:
+                interruptReturn();
             case EXIT:
+                out.close();
                 return true;
             default:
                 throw new AssertionError("The specified instruction is not implemented.");
@@ -146,9 +148,9 @@ public class InstructionHandler {
         int port = fetchNext();
         int value = registers.getAccumulator();
         if (port == 1) {
-            out.println(value);
+            out.print(value);
         } else if (port == 2) {
-            out.println((char) value);
+            out.print((char) value);
         } else {
             throw new AssertionError("Invalid port number - expected 1 or 2.");
         }
@@ -162,49 +164,59 @@ public class InstructionHandler {
         registers.increment(Register.ACCUMULATOR, -registers.read(register));
     }
 
-    private void jump() {
-        registers.write(Register.PROGRAM_COUNTER, fetchNext());
+    private void jump(int address) {
+        registers.write(Register.PROGRAM_COUNTER, address);
     }
 
-    private void conditionalJump(boolean condition) {
-        // cannot be ternary due to void
+    private void conditionalJump(boolean condition, int address) {
         if (condition) {
-            jump();
-        } else {
-            // always fetch and discard address
-            fetchNext();
+            jump(address);
         }
     }
 
     private void call() {
-
+        pushStack(registers.read(Register.PROGRAM_COUNTER));
+        jump(fetchNext());
     }
 
     private void ret() {
-
+        jump(popStack());
     }
 
     private void push() {
-
+        pushStack(registers.getAccumulator());
     }
 
     private void pop() {
-
+        registers.setAccumulator(popStack());
     }
 
-    private void systemCall() {
-
+    private void pushStack(int value) {
+        // increment stack location before pushing
+        registers.increment(Register.STACK_POINTER, 1);
+        memory.write(registers.read(Register.STACK_POINTER), value);
     }
 
-    private void systemCallReturn() {
-
+    private int popStack() {
+        // fetch value from location pointed to by stack
+        return memory.read(registers.increment(Register.STACK_POINTER, -1));
     }
 
-    public void interrupt() {
-
+    public void interrupt(int address) {
+        pushStack(registers.read(Register.STACK_POINTER));
+        pushStack(registers.read(Register.PROGRAM_COUNTER));
+        jump(address);
     }
 
-    private OperatingMode mode = OperatingMode.USER;
+    private void interruptReturn() {
+        // stack is LIFO
+        registers.write(Register.PROGRAM_COUNTER, popStack());
+        registers.write(Register.STACK_POINTER, popStack());
+        // resume normal execution
+        jump(registers.read(Register.PROGRAM_COUNTER));
+    }
+
+    // private OperatingMode mode = OperatingMode.USER;
     private Registers registers;
     private MemoryInterface memory;
 

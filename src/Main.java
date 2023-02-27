@@ -15,20 +15,6 @@ public class Main {
         cpu.executeProgram();
     }
 
-    /**
-     * Parses a program from an input stream into a list of Integers.
-     */
-    public static List<Integer> parseProgram(InputStream in) throws IOException {
-        try (Scanner scanner = new Scanner(in)) {
-            // Regex matches the start of the string, any amount of whitespace, a digit, and
-            // then any characters before the end
-            return scanner.findAll(INSTRUCTION_REGEX)
-                    .map(match -> Integer.parseInt(match.group(1)))
-                    .toList();
-        }
-    }
-
-    private static final Pattern INSTRUCTION_REGEX = Pattern.compile("^\\.?(\\d+)", Pattern.MULTILINE);
 
     public static CpuFactory getCpuFactory() {
         CpuFactory factory = new CpuFactory();

@@ -6,16 +6,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -52,16 +55,25 @@ public class MainTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "test1.txt", "1.txt" })
-    public void testProgram(String fileName) throws FileNotFoundException, IOException {
+    @Timeout(2)
+    @ValueSource(strings = { "test1.txt", "test2.txt", "timerTest.txt" }, ints = { Integer.MAX_VALUE, Integer.MAX_VALUE, 2 })
+    public void testProgram(String fileName, int timerIncrement) throws FileNotFoundException, IOException {
         File file = getFile(fileName);
         List<Integer> program = Main.parseProgram(new FileInputStream(file));
-        Cpu cpu = factory.makeCpu(program, Integer.MAX_VALUE);
+        // ignore timer
+        Cpu cpu = factory.makeCpu(program, timerIncrement);
 
         cpu.executeProgram();
 
         if (fileName.equals("test1.txt")) {
             assertEquals(inputs.limit(3).sum(), in.nextInt());
+        }
+        else if (fileName.equals("test2.txt")) {
+            assertEquals("HI", in.nextLine());
+        }
+        else if (fileName.equals("timerTest.txt")) {
+            assertEquals("H", in.nextLine());
+            assertEquals("I", in.nextLine());
         }
     }
 }

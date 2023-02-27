@@ -14,7 +14,7 @@ import src.Main;
 public class CpuTest {
     @Test
     public void testParseProgram() throws IOException {
-        String test = "25 // Some comment\n.10 Comment #5\n.15";
+        String test = "25 // Some comment\n.10 Comment #5\n.15\n25";
         List<Integer> expected = Arrays.asList(25, 10, 15);
 
         InputStream inputStream = new ByteArrayInputStream(test.getBytes());
