@@ -15,7 +15,9 @@ public class InstructionHandler {
         this.memory = memory;
         this.input = input;
         this.out = new PrintWriter(out, true);
-        this.interruptsEnabled = true;
+
+        // init stack location
+        registers.write(Register.STACK_POINTER, 1000);
     }
 
     public void fetchInstruction() {
@@ -32,7 +34,7 @@ public class InstructionHandler {
      * @return true if the program should terminate, and false if it should
      *         continue.
      */
-    public boolean executeInstruction() {
+    public boolean executeInstruction() throws IllegalAccessException {
         Instruction instruction = Instruction.getInstruction(registers.read(Register.INSTRUCTION_REGISTER));
         switch (instruction) {
             case LOAD_VALUE:
@@ -133,11 +135,13 @@ public class InstructionHandler {
         registers.setAccumulator(value);
     }
 
-    private void loadAddress(int address) {
+    private void loadAddress(int address) throws IllegalAccessException {
+        checkMemoryAccess(address);
         load(memory.read(address));
     }
 
-    private void loadIndex(int value, Register register) {
+    private void loadIndex(int value, Register register) throws IllegalAccessException {
+        checkMemoryAccess(registers.read(register));
         loadAddress(value + memory.read(registers.read(register)));
     }
 
@@ -165,22 +169,23 @@ public class InstructionHandler {
         registers.increment(Register.ACCUMULATOR, -registers.read(register));
     }
 
-    private void jump(int address) {
+    private void jump(int address) throws IllegalAccessException {
+        checkMemoryAccess(address);
         registers.write(Register.PROGRAM_COUNTER, address);
     }
 
-    private void conditionalJump(boolean condition, int address) {
+    private void conditionalJump(boolean condition, int address) throws IllegalAccessException {
         if (condition) {
             jump(address);
         }
     }
 
-    private void call() {
+    private void call() throws IllegalAccessException {
         pushStack(registers.read(Register.PROGRAM_COUNTER));
         jump(fetchNext());
     }
 
-    private void ret() {
+    private void ret() throws IllegalAccessException {
         jump(popStack());
     }
 
@@ -193,34 +198,68 @@ public class InstructionHandler {
     }
 
     private void pushStack(int value) {
-        // increment stack location before pushing
-        registers.increment(Register.STACK_POINTER, 1);
+        // change stack location before pushing
+        registers.increment(Register.STACK_POINTER, -1);
         memory.write(registers.read(Register.STACK_POINTER), value);
     }
 
     private int popStack() {
         // fetch value from location pointed to by stack
-        return memory.read(registers.increment(Register.STACK_POINTER, -1));
+        return memory.read(registers.increment(Register.STACK_POINTER, 1));
     }
 
+    private void systemCall() {
+
+    }
+
+    private void systemCallReturn() {
+
+    }
+
+    /**
+     * @return true if the program can be interrupted, and false otherwise.
+     */
     public boolean canInterrupt() {
         return interruptsEnabled;
     }
 
-    public void interrupt(int address) {
+    /**
+     * Interrupts the processor. Throws if `canInterrupt()` is false.
+     * @throws IllegalAccessException
+     */
+    public void interrupt(int address) throws IllegalAccessException {
+        if (!canInterrupt()) {
+            throw new IllegalAccessException("The program cannot be interrupted at this time.");
+        }
         interruptsEnabled = false;
+        mode = OperatingMode.KERNEL;
+
         pushStack(registers.read(Register.STACK_POINTER));
         pushStack(registers.read(Register.PROGRAM_COUNTER));
         jump(address);
     }
 
-    private void interruptReturn() {
+    private void interruptReturn() throws IllegalAccessException {
         // stack is LIFO
         registers.write(Register.PROGRAM_COUNTER, popStack());
         registers.write(Register.STACK_POINTER, popStack());
         // resume normal execution
         jump(registers.read(Register.PROGRAM_COUNTER));
+
         interruptsEnabled = true;
+        mode = OperatingMode.USER;
+    }
+
+    /**
+     * @throws IllegalAccessException if the address cannot be legally accessed.
+     */
+    private void checkMemoryAccess(int address) throws IllegalAccessException {
+        if (address < 0 || address >= 2000) {
+            throw new IllegalAccessException("The specified address is out of bounds.");
+        }
+        else if (mode == OperatingMode.USER && address >= 1000) {
+            throw new IllegalAccessException("Cannot access the specified address in user mode.");
+        }
     }
 
     // private OperatingMode mode = OperatingMode.USER;
@@ -229,5 +268,6 @@ public class InstructionHandler {
 
     private Iterator<Integer> input;
     private PrintWriter out;
+    private OperatingMode mode = OperatingMode.USER;
     private boolean interruptsEnabled = true;
 }

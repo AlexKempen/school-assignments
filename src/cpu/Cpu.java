@@ -6,7 +6,7 @@ public class Cpu {
         this.timer = timer;
     }
 
-    public void executeProgram() {
+    public void executeProgram() throws IllegalAccessException {
         while (true) {
             handler.fetchInstruction();
             if (handler.executeInstruction()) {

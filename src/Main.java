@@ -8,7 +8,7 @@ import src.cpu.Cpu;
 import src.memory.MemoryManager;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IllegalAccessException, IOException {
         checkArgs(args);
         List<Integer> program = parseProgram(args);
         int timerIncrement = parseTimerIncrement(args);

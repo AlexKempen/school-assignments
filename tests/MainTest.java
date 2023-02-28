@@ -1,5 +1,6 @@
 package tests;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,12 +29,9 @@ import src.memory.MemoryManager;
 
 public class MainTest {
     @BeforeEach
-    public void setupCpu() throws IOException {
-        // workingDir = Path.of("", "tests/testcases");
-
+    public void setup() throws IOException {
         cpuFactory = new CpuFactory();
         // use a basic memory to avoid spawning process for testing
-        cpuFactory.setMemory(new Memory());
 
         int seed = 42;
         cpuFactory.setInput(seed);
@@ -43,6 +42,11 @@ public class MainTest {
         cpuFactory.setOut(new PipedOutputStream(pipeIn));
 
         memoryFactory = new MemoryFactory();
+    }
+
+    @AfterEach
+    public void cleanup() {
+        in.close();
     }
 
     private CpuFactory cpuFactory;
@@ -58,7 +62,7 @@ public class MainTest {
     @ParameterizedTest
     @Timeout(2)
     @CsvSource({ "test1.txt, 999", "test2.txt, 999", "timerTest.txt, 2" })
-    public void testProgram(String fileName, Integer timerIncrement) throws FileNotFoundException, IOException {
+    public void testProgram(String fileName, Integer timerIncrement) throws FileNotFoundException, IOException, IllegalAccessException {
         File file = getFile(fileName);
         List<Integer> program = MemoryManager.parseProgram(new FileInputStream(file));
         memoryFactory.setProgram(program);
@@ -79,6 +83,31 @@ public class MainTest {
         else if (fileName.equals("timerTest.txt")) {
             assertEquals("H", in.nextLine());
             assertEquals("I", in.nextLine());
+        }
+    }
+
+    @ParameterizedTest
+    @Timeout(2)
+    @CsvSource({ "1.txt, 3", "2.txt, 3", "3.txt, 5", "4.txt, 5" })
+    public void testAssignmentProgram(String fileName, Integer timerIncrement) throws IllegalAccessException, FileNotFoundException, IOException {
+        File file = getFile(fileName);
+        List<Integer> program = MemoryManager.parseProgram(new FileInputStream(file));
+        memoryFactory.setProgram(program);
+        // use a simple memory for testing
+        cpuFactory.setMemory(memoryFactory.makeMemory());
+        cpuFactory.setTimerIncrement(timerIncrement);
+
+        Cpu cpu = cpuFactory.makeCpu();
+
+        if (fileName.equals("4.txt")) {
+            assertThrows(new IllegalAccessException().getClass(), cpu::executeProgram);
+        }
+        else {
+            cpu.executeProgram();
+        }
+
+        while (in.hasNextLine()) {
+            System.out.print(in.nextLine());
         }
     }
 }
