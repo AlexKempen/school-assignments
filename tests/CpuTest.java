@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import src.Main;
+import src.memory.MemoryManager;
 
 public class CpuTest {
     @Test
@@ -18,7 +18,7 @@ public class CpuTest {
         List<Integer> expected = Arrays.asList(25, 10, 15);
 
         InputStream inputStream = new ByteArrayInputStream(test.getBytes());
-        List<Integer> result = Main.parseProgram(inputStream);
+        List<Integer> result = MemoryManager.parseProgram(inputStream);
         assertArrayEquals(expected.toArray(), result.toArray());
     }
 }

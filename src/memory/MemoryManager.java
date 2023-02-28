@@ -43,8 +43,8 @@ public class MemoryManager implements MemoryInterface {
 
     private static final Pattern INSTRUCTION_REGEX = Pattern.compile("^(\\.?)(\\d+)", Pattern.MULTILINE);
 
-    public void loadProgram(InputStream in) throws IOException {
-        batchWrite(0, parseProgram(in));
+    public void loadProgram(List<Integer> program) {
+        batchWrite(0, program);
     }
 
     private void batchWrite(int address, List<Integer> data) {

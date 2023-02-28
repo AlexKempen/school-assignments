@@ -6,46 +6,47 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import src.CpuFactory;
-import src.Main;
+import src.MemoryFactory;
 import src.cpu.Cpu;
 import src.memory.Memory;
+import src.memory.MemoryManager;
 
 public class MainTest {
     @BeforeEach
     public void setupCpu() throws IOException {
         // workingDir = Path.of("", "tests/testcases");
 
-        factory = new CpuFactory();
+        cpuFactory = new CpuFactory();
         // use a basic memory to avoid spawning process for testing
-        factory.setMemory(new Memory());
+        cpuFactory.setMemory(new Memory());
 
         int seed = 42;
-        factory.setSeed(seed);
+        cpuFactory.setInput(seed);
         inputs = new Random(seed).ints(1, 101);
 
         PipedInputStream pipeIn = new PipedInputStream();
         in = new Scanner(pipeIn);
-        factory.setOut(new PipedOutputStream(pipeIn));
+        cpuFactory.setOut(new PipedOutputStream(pipeIn));
+
+        memoryFactory = new MemoryFactory();
     }
 
-    private CpuFactory factory;
+    private CpuFactory cpuFactory;
+    private MemoryFactory memoryFactory;
     private IntStream inputs;
     private Scanner in;
 
@@ -56,12 +57,15 @@ public class MainTest {
 
     @ParameterizedTest
     @Timeout(2)
-    @ValueSource(strings = { "test1.txt", "test2.txt", "timerTest.txt" }, ints = { Integer.MAX_VALUE, Integer.MAX_VALUE, 2 })
-    public void testProgram(String fileName, int timerIncrement) throws FileNotFoundException, IOException {
+    @CsvSource({ "test1.txt, -1", "test2.txt, -1", "timerTest.txt, 2" })
+    public void testProgram(String fileName, Integer timerIncrement) throws FileNotFoundException, IOException {
         File file = getFile(fileName);
-        List<Integer> program = Main.parseProgram(new FileInputStream(file));
-        // ignore timer
-        Cpu cpu = factory.makeCpu(program, timerIncrement);
+        List<Integer> program = MemoryManager.parseProgram(new FileInputStream(file));
+        memoryFactory.setProgram(program);
+        // use a simple memory for testing
+        cpuFactory.setMemory(memoryFactory.makeMemory());
+
+        Cpu cpu = cpuFactory.makeCpu();
 
         cpu.executeProgram();
 
