@@ -57,13 +57,14 @@ public class MainTest {
 
     @ParameterizedTest
     @Timeout(2)
-    @CsvSource({ "test1.txt, -1", "test2.txt, -1", "timerTest.txt, 2" })
+    @CsvSource({ "test1.txt, 999", "test2.txt, 999", "timerTest.txt, 2" })
     public void testProgram(String fileName, Integer timerIncrement) throws FileNotFoundException, IOException {
         File file = getFile(fileName);
         List<Integer> program = MemoryManager.parseProgram(new FileInputStream(file));
         memoryFactory.setProgram(program);
         // use a simple memory for testing
         cpuFactory.setMemory(memoryFactory.makeMemory());
+        cpuFactory.setTimerIncrement(timerIncrement);
 
         Cpu cpu = cpuFactory.makeCpu();
 

@@ -32,8 +32,12 @@ public class CpuFactory {
     }
 
     public Cpu makeCpu() {
-        if (memory == null) { throw new NullPointerException("setMemory must be called before makeCpu."); }
-        if (input == null) { setInput(0); }
+        if (memory == null) {
+            throw new NullPointerException("setMemory must be called before makeCpu.");
+        }
+        if (input == null) {
+            setInput(0);
+        }
 
         InstructionHandler handler = new InstructionHandler(new Registers(), memory, input, out);
         return new Cpu(handler, new Timer(timerIncrement));

@@ -15,6 +15,7 @@ public class InstructionHandler {
         this.memory = memory;
         this.input = input;
         this.out = new PrintWriter(out, true);
+        this.interruptsEnabled = true;
     }
 
     public void fetchInstruction() {
@@ -202,7 +203,12 @@ public class InstructionHandler {
         return memory.read(registers.increment(Register.STACK_POINTER, -1));
     }
 
+    public boolean canInterrupt() {
+        return interruptsEnabled;
+    }
+
     public void interrupt(int address) {
+        interruptsEnabled = false;
         pushStack(registers.read(Register.STACK_POINTER));
         pushStack(registers.read(Register.PROGRAM_COUNTER));
         jump(address);
@@ -214,6 +220,7 @@ public class InstructionHandler {
         registers.write(Register.STACK_POINTER, popStack());
         // resume normal execution
         jump(registers.read(Register.PROGRAM_COUNTER));
+        interruptsEnabled = true;
     }
 
     // private OperatingMode mode = OperatingMode.USER;
@@ -222,4 +229,5 @@ public class InstructionHandler {
 
     private Iterator<Integer> input;
     private PrintWriter out;
+    private boolean interruptsEnabled = true;
 }

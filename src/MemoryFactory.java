@@ -13,7 +13,7 @@ public class MemoryFactory {
     }
 
     public void setProgram(List<Integer> program) {
-    this.program = program;
+        this.program = program;
     }
 
     public MemoryInterface makeMemoryManager() {

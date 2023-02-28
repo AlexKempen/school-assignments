@@ -2,15 +2,17 @@
 72
 9 // put
 2 
+// interrupt here
 1 // Load I
 73
 9 // put
 2
+// interrupt here
 50 // exit
 
 .1000 // timer routine
 1 // Load new line
 10
-9 
+9  // put new line
 2
-30 // return
+24 // return
