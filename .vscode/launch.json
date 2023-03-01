@@ -6,36 +6,25 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch CommandProcess",
-            "request": "launch",
-            "mainClass": "src.command.CommandProcess",
-            "projectName": "school-assignments_1d90d5da"
-        },
-        {
-            "type": "java",
-            "name": "Launch ProcessUtils",
-            "request": "launch",
-            "mainClass": "src.operating_system.ProcessUtils",
-            "projectName": "school-assignments_52bf7162"
-        },
-        {
-            "type": "java",
-            "name": "Launch CommandRecieverTest",
-            "request": "launch",
-            "mainClass": "src.command.CommandRecieverTest",
-            "projectName": "school-assignments_52bf7162"
-        },
-        {
-            "type": "java",
-            "name": "Launch MemoryProcess",
-            "request": "launch",
-            "mainClass": "src.memory.MemoryProcess"
-        },
-        {
-            "type": "java",
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "src.Main"
+        },
+        {
+            "type": "java",
+            "name": "Launch sample1",
+            "request": "launch",
+            "mainClass": "src.Main",
+            "args": ["tests/resources/1.txt", 5]
+
+        },
+        {
+            "type": "java",
+            "name": "Launch sample2",
+            "request": "launch",
+            "mainClass": "src.Main",
+            "args": ["tests/resources/2.txt", 5]
+
         }
     ]
 }

@@ -65,6 +65,7 @@ public class InstructionHandler {
                 put();
                 break;
             case ADD_X:
+
                 add(Register.X);
                 break;
             case ADD_Y:
@@ -208,14 +209,6 @@ public class InstructionHandler {
         return memory.read(registers.increment(Register.STACK_POINTER, 1));
     }
 
-    private void systemCall() {
-
-    }
-
-    private void systemCallReturn() {
-
-    }
-
     /**
      * @return true if the program can be interrupted, and false otherwise.
      */
@@ -234,7 +227,11 @@ public class InstructionHandler {
         interruptsEnabled = false;
         mode = OperatingMode.KERNEL;
 
-        pushStack(registers.read(Register.STACK_POINTER));
+        // push stack
+        int userStackPointer = registers.read(Register.STACK_POINTER);
+        registers.write(Register.STACK_POINTER, 2000);
+        // save user stack
+        pushStack(userStackPointer);
         pushStack(registers.read(Register.PROGRAM_COUNTER));
         jump(address);
     }
@@ -242,6 +239,7 @@ public class InstructionHandler {
     private void interruptReturn() throws IllegalAccessException {
         // stack is LIFO
         registers.write(Register.PROGRAM_COUNTER, popStack());
+        // reset user stack - system stack is assumed to be empty now?
         registers.write(Register.STACK_POINTER, popStack());
         // resume normal execution
         jump(registers.read(Register.PROGRAM_COUNTER));

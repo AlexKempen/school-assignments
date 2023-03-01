@@ -37,7 +37,7 @@ public class CommandReceiver {
             ResultCommand<Executor, ?> resultCommand = stream
                     .<ResultCommand<Executor, ?>>castObject(object);
             stream.writeObject(resultCommand.execute(executor));
-            return true; // always continue after ResultCommand
+            return false; // always continue after ResultCommand
         }
         throw new AssertionError("Expected valid command.");
     }

@@ -1,7 +1,10 @@
 package src;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 
 import src.cpu.Cpu;
@@ -40,12 +43,15 @@ public class Main {
 
     public static Cpu getCpu(List<Integer> program, int timerIncrement) {
         MemoryFactory memoryFactory = new MemoryFactory();
-        memoryFactory.setProgram(program);
-
         CpuFactory cpuFactory = new CpuFactory();
-        cpuFactory.setMemory(memoryFactory.makeMemoryManager());
-        cpuFactory.setTimerIncrement(timerIncrement);
 
-        return cpuFactory.makeCpu();
+        File outFile = new File("out.txt");
+        try {
+            cpuFactory.setOut(new PrintStream(outFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return cpuFactory.makeCpu(memoryFactory.makeMemoryManager(program), timerIncrement);
     }
 }

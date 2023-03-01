@@ -7,9 +7,8 @@ public class CommandProcess {
      * commands on an Executor.
      */
     public static void main(String[] args) {
-        CommandStream stream = new CommandStream();
+        CommandStream stream = new CommandStream(System.out);
         stream.addInputStream(System.in);
-        stream.addOutputStream(System.out);
         CommandReceiver receiver = new CommandReceiver(stream);
         receiver.processCommands();
     }
@@ -40,8 +39,7 @@ public class CommandProcess {
     private static final String[] PROCESS_COMMAND = { "java", "-cp", "out", "src/command/CommandProcess" };
 
     public CommandStream makeCommandStream() {
-        CommandStream stream = new CommandStream();
-        stream.addOutputStream(process.getOutputStream());
+        CommandStream stream = new CommandStream(process.getOutputStream());
         stream.addInputStream(process.getInputStream());
         return stream;
     }

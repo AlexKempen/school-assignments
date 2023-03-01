@@ -27,11 +27,8 @@ public class CommandTest {
         File sentCommands = folder.resolve("commands.txt").toFile();
         File commandResults = folder.resolve("results.txt").toFile();
 
-        receiverStream = new CommandStream();
-        invokerStream = new CommandStream();
-
-        invokerStream.addOutputStream(new FileOutputStream(sentCommands));
-        receiverStream.addOutputStream(new FileOutputStream(commandResults));
+        CommandStream invokerStream = new CommandStream(new FileOutputStream(sentCommands));
+        CommandStream receiverStream = new CommandStream(new FileOutputStream(commandResults));
 
         invokerStream.addInputStream(new FileInputStream(commandResults));
         receiverStream.addInputStream(new FileInputStream(sentCommands));

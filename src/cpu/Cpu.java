@@ -13,7 +13,7 @@ public class Cpu {
                 break;
             }
 
-            if (handler.canInterrupt() && timer.poll()) {
+            if (timer.poll() && handler.canInterrupt()) {
                 // interrupt at address 1000
                 handler.interrupt(1000);
             }

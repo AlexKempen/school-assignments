@@ -9,18 +9,7 @@ import src.memory.MemoryInterface;
 import src.memory.MemoryManager;
 
 public class MemoryFactory {
-    public MemoryFactory() {
-    }
-
-    public void setProgram(List<Integer> program) {
-        this.program = program;
-    }
-
-    public MemoryInterface makeMemoryManager() {
-        if (program == null) {
-            throw new NullPointerException("setProgram must be called before make.");
-        }
-
+    public MemoryInterface makeMemoryManager(List<Integer> program) {
         CommandProcess commandProcess = CommandProcess.startCommandProcess();
         MemoryManager memory = new MemoryManager(
                 new CommandInvoker<Memory>(new Memory(), commandProcess.makeCommandStream()));
@@ -28,17 +17,11 @@ public class MemoryFactory {
         return memory;
     }
 
-    public MemoryInterface makeMemory() {
-        if (program == null) {
-            throw new NullPointerException("setProgram must be called before make.");
-        }
-
+    public MemoryInterface makeMemory(List<Integer> program) {
         Memory memory = new Memory();
         for (int i = 0; i < program.size(); ++i) {
             memory.write(i, program.get(i));
         }
         return memory;
     }
-
-    List<Integer> program;
 }

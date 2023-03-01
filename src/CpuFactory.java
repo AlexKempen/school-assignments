@@ -12,11 +12,6 @@ import src.memory.MemoryInterface;
 
 public class CpuFactory {
     public CpuFactory() {
-        out = System.out;
-    }
-
-    public void setMemory(MemoryInterface memory) {
-        this.memory = memory;
     }
 
     public void setInput(long seed) {
@@ -27,16 +22,12 @@ public class CpuFactory {
         this.out = out;
     }
 
-    public void setTimerIncrement(int timerIncrement) {
-        this.timerIncrement = timerIncrement;
-    }
-
-    public Cpu makeCpu() {
-        if (memory == null) {
-            throw new NullPointerException("setMemory must be called before makeCpu.");
-        }
+    public Cpu makeCpu(MemoryInterface memory, int timerIncrement) {
         if (input == null) {
             setInput(0);
+        }
+        if (out == null) {
+            setOut(System.out);
         }
 
         InstructionHandler handler = new InstructionHandler(new Registers(), memory, input, out);
@@ -44,7 +35,5 @@ public class CpuFactory {
     }
 
     private Iterator<Integer> input;
-    private MemoryInterface memory;
     private OutputStream out;
-    private int timerIncrement = Integer.MAX_VALUE;
 }
