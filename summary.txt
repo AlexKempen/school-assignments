@@ -1,6 +1,6 @@
 Project Purpose:
-
-
+The purpose of this project is to implement a basic cpu and memory capable of reading and executing simple instructions
+in a manner similar to a real cpu.
 
 Implementation:
 To facilitate efficient and generic interactions with my Memory sub-process, I choose
