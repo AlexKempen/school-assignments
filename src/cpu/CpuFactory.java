@@ -1,19 +1,19 @@
-package src;
+package src.cpu;
 
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Random;
 
-import src.cpu.Cpu;
-import src.cpu.InstructionHandler;
-import src.cpu.Registers;
-import src.cpu.Timer;
 import src.memory.MemoryInterface;
 
+/**
+ * A factory class for constructing a Cpu.
+ */
 public class CpuFactory {
-    public CpuFactory() {
-    }
-
+    /**
+     * Initializes the input stream of the input to a random stream with the given
+     * seed.
+     */
     public void setInput(long seed) {
         input = new Random(seed).ints(1, 101).iterator();
     }

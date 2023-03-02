@@ -1,5 +1,8 @@
 package src.cpu;
 
+/**
+ * A class defining several basic registers.
+ */
 public class Registers {
     public int read(Register register) {
         switch (register) {

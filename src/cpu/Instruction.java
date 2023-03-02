@@ -33,6 +33,9 @@ public enum Instruction {
     INTERRUPT_RETURN(30),
     EXIT(50);
 
+    /**
+     * Converts a value to an Instruction.
+     */
     public static Instruction getInstruction(int value) {
         Instruction[] instructions = Instruction.values();
         for (Instruction instruction : instructions) {

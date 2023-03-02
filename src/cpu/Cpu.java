@@ -1,5 +1,8 @@
 package src.cpu;
 
+/**
+ * A class defining a basic Cpu capable of executing a program.
+ */
 public class Cpu {
     public Cpu(InstructionHandler handler, Timer timer) {
         this.handler = handler;
@@ -13,8 +16,8 @@ public class Cpu {
                 break;
             }
 
+            // timer.poll() is first to always keep incrementing
             if (timer.poll() && handler.canInterrupt()) {
-                // interrupt at address 1000
                 handler.interrupt(1000);
             }
         }

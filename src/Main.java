@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import src.cpu.Cpu;
+import src.cpu.CpuFactory;
 import src.memory.MemoryFactory;
 import src.memory.MemoryManager;
 
@@ -15,6 +16,12 @@ public class Main {
         int timerIncrement = parseTimerIncrement(args);
         Cpu cpu = getCpu(program, timerIncrement);
         cpu.executeProgram();
+    }
+
+    public static void checkArgs(String[] args) throws IOException {
+        if (args.length != 2) {
+            throw new IOException("Expected two arguments.");
+        }
     }
 
     public static List<Integer> parseProgram(String[] args) throws IOException {
@@ -30,12 +37,6 @@ public class Main {
             return Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             throw new IOException("Failed to parse timer increment.", e);
-        }
-    }
-
-    public static void checkArgs(String[] args) throws IOException {
-        if (args.length != 2) {
-            throw new IOException("Expected two arguments.");
         }
     }
 

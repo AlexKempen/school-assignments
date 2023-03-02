@@ -3,11 +3,13 @@
 1
 7 // store 1 in 100
 100
-7 // store 1 in 101
+1 // load 0
+0
+7 // store 0 in 101
 101
 
 1 // load 10 into ac
-10
+10 // numbers to print
 14 // copy 10 to X
 
 20 // proceed to next part of program
@@ -15,28 +17,25 @@
 
 // for loop
 .25
-// load 100 + 101 into Y
-2 // load 101
-101
-16 // copy to Y
-2 // load addr 100
-100
-11 // Add Y to ac
-16 // copy to Y
 
 // call print routine
-23
+2 // load 100
+100
+
+16 // copy to Y
+
+23 // call print subroutine
 150
 
-// load 100 into 101
-2 // load addr 100
-100
-7 // store into 101
+2 // load addr 101
 101
+11 // Add Y to ac
 
-// load Y to 100
+7 // store into 100
+100
+
 17 // copy from Y
-7 // load to 100
+7 // store into 101
 101
 
 26 // decrement X
@@ -45,6 +44,12 @@
 22 // jump to 25 if we're not done
 25
 
+// print newline
+1 
+10
+9
+2
+
 50 // exit
 
 // print subroutine - prints value of AC followed by newline
@@ -52,8 +57,8 @@
 .150 
 9 // print value as int
 1
-1 // load new line
-10
+1 // load space
+32
 9 // print
 2
 24 // return

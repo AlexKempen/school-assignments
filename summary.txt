@@ -1,0 +1,37 @@
+Project Purpose:
+
+
+
+Implementation:
+To facilitate efficient and generic interactions with my Memory sub-process, I choose
+to implement the command design pattern.
+In this pattern, instructions are represented as classes and passed an executable object they can
+interact with, and various generic utilities are created for initializing and
+retrieving them. Furthermore, the classes use Java's serializable alongside Java object streams to
+enable passing the executor and subsequent commands generically.
+
+To further divide up the functionality, the cpu executes instructions via an InstructionManager, which
+is the class actually responsible for executing any given instruction.
+
+During the course of development, significant time was spent developing and
+refining various aspects of the implementation. For example, the Command
+implementation is dramatically different from its initial implementation;
+features like ResultCommand and CommandStream were added, and CommandProcess was
+changed from a simple factory to an actual class. 
+
+Testing was also a key concern throughout development. Testing has obvious benefits during development, 
+and as a result, dependencies and class dependencies were carefully managed to enable quickly and easily
+instantiating and using various functionality.
+
+Some examples of changes meant to promote testing include modifying CommandReceiver and CommandInvoker to 
+take CommandStreams directly (to prevent extraneous instantiations during testing), writing factories for
+Cpu and Memory to enable synchronizing seeds (while keeping those details hidden from Main), and abstracting
+Memory into a MemoryInterface to enable full scale system tests without requiring the overhead of instantiating
+a complete MemoryManager and corresponding CommandProcess.
+
+Personal Experience:
+The implementation and refinement of the above features were a source of great learning for me. Obviously,
+a bare-bones implementation of just the basic project requirements would require dramatically less code 
+(and dramatically less time), implementing these extra frills gave me valuable experience with important
+programming principles including object oriented design, design for testing (especially dependency injection), 
+and the command based design pattern.

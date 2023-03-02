@@ -6,7 +6,7 @@ import src.command.Command;
 import src.memory.Memory;
 
 /**
- * A command which batch writes data into memory at address 0.
+ * A command which batch writes data into memory, starting at the given address.
  */
 public class BatchWriteCommand extends Command<Memory> {
     public BatchWriteCommand(int address, List<Integer> data) {

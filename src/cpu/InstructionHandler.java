@@ -5,6 +5,9 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 import src.memory.MemoryInterface;
 
+/**
+ * A class which may be used to execute instructions in memory.
+ */
 public class InstructionHandler {
     /**
      * @param input : An iterator pointing at a stream of random integers ranging
@@ -291,6 +294,7 @@ public class InstructionHandler {
 
     private Iterator<Integer> input;
     private PrintWriter out;
+
     private OperatingMode mode = OperatingMode.USER;
     private boolean interruptsEnabled = true;
 }

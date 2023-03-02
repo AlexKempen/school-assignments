@@ -25,6 +25,7 @@ public class MemoryManager implements MemoryInterface {
     public static List<Integer> parseProgram(InputStream in) throws IOException {
         List<Integer> memory = new ArrayList<>(Collections.nCopies(2000, 0));
         try (Scanner scanner = new Scanner(in)) {
+            // use regex to get matches
             List<MatchResult> matches = scanner.findAll(INSTRUCTION_REGEX).toList();
             int index = 0;
             for (MatchResult match : matches) {
@@ -41,8 +42,12 @@ public class MemoryManager implements MemoryInterface {
         return memory;
     }
 
+    // matches the start of the line, an optional period, and then one or more digits
     private static final Pattern INSTRUCTION_REGEX = Pattern.compile("^(\\.?)(\\d+)", Pattern.MULTILINE);
 
+    /**
+     * Loads the program into memory at address 0.
+     */
     public void loadProgram(List<Integer> program) {
         batchWrite(0, program);
     }

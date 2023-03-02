@@ -1,8 +1,0 @@
-To facilitate efficient communication between sub-processes and the Operating System, I choose to implement the command design pattern. In this pattern, instructions are represented as classes and passed an executable object they can interact with, and various generic utilities are created for initializing and retrieving them. Furthermore, the classes use Java's Serializable feature to enable serializing the entire command class at once, enabling a clean transfer of data between processes.
-
-The cpu has ownership of the registers and is responsible for fetching and executing instructions from memory. Notably, the cpu and memory are siloed from each other, with the actual communication done via Commands managed by the operating system. The operating system interfaces with each subsystem through the respective Manager, with the manager providing important facilities like exceptions and other behaviors.
-
-During the course of development, significant time was spent developing and refining various aspects of the implementation. For example, the Command implementation is dramatically different from its initial implementation; features like ResultCommand and CommandStream were added, and CommandProcess was changed from a simple factory to an actual class. Some of these changes were also driven by a desire for testing. For example, direct injection was applied to CommandInvoker and CommandStream was modified to use the builder pattern in order to enable constructing multiple command streams in line and remove CommandInvoker dependencies on CommandProcess (since instantiating a CommandProcess for the purposes of testing is not desirable).
-
-
-

@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import src.CpuFactory;
 import src.cpu.Cpu;
+import src.cpu.CpuFactory;
 import src.memory.MemoryFactory;
 import src.memory.MemoryManager;
 
