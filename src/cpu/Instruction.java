@@ -33,12 +33,6 @@ public enum Instruction {
     INTERRUPT_RETURN(30),
     EXIT(50);
 
-    private Instruction(int value) {
-        this.value = value;
-    }
-
-    private int value;
-
     public static Instruction getInstruction(int value) {
         Instruction[] instructions = Instruction.values();
         for (Instruction instruction : instructions) {
@@ -46,6 +40,13 @@ public enum Instruction {
                 return instruction;
             }
         }
-        throw new AssertionError("Failed to cast value to Instruction.");
+        throw new AssertionError("Failed to cast value to Instruction: " + value);
     }
+
+    // singleton constructor
+    private Instruction(int value) {
+        this.value = value;
+    }
+
+    private int value;
 }

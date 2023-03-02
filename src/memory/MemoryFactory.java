@@ -1,12 +1,9 @@
-package src;
+package src.memory;
 
 import java.util.List;
 
 import src.command.CommandInvoker;
 import src.command.CommandProcess;
-import src.memory.Memory;
-import src.memory.MemoryInterface;
-import src.memory.MemoryManager;
 
 public class MemoryFactory {
     public MemoryInterface makeMemoryManager(List<Integer> program) {

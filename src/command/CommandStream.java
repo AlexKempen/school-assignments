@@ -60,6 +60,7 @@ public class CommandStream {
         if (in == null) {
             throw new NullPointerException("Expected Output stream to be registered.");
         }
+
         try {
             return in.readObject();
         } catch (Exception e) {
@@ -85,6 +86,6 @@ public class CommandStream {
         }
     }
 
-    private ObjectInputStream in = null;
-    private ObjectOutputStream out = null;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 }

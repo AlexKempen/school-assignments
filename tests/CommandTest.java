@@ -2,7 +2,6 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -27,17 +26,11 @@ public class CommandTest {
         File sentCommands = folder.resolve("commands.txt").toFile();
         File commandResults = folder.resolve("results.txt").toFile();
 
-        CommandStream invokerStream = new CommandStream(new FileOutputStream(sentCommands));
-        CommandStream receiverStream = new CommandStream(new FileOutputStream(commandResults));
+        invokerStream = new CommandStream(new FileOutputStream(sentCommands));
+        receiverStream = new CommandStream(new FileOutputStream(commandResults));
 
         invokerStream.addInputStream(new FileInputStream(commandResults));
         receiverStream.addInputStream(new FileInputStream(sentCommands));
-    }
-
-    @AfterEach
-    public void closeCommandStreams() {
-        invokerStream.close();
-        receiverStream.close();
     }
 
     public CommandStream invokerStream;
@@ -64,6 +57,8 @@ public class CommandTest {
         Integer result = invoker.send(readCommand);
         assertEquals(result, expected);
         assertNotNull((ReadCommand) receiverStream.readObject());
+
+        receiverStream.close();
     }
 
     @Test
@@ -81,5 +76,7 @@ public class CommandTest {
         receiver.processCommands();
 
         assertEquals(expected, invokerStream.readObject());
+
+        invokerStream.close();
     }
 }

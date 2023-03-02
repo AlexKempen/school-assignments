@@ -15,7 +15,7 @@
             "name": "Launch sample1",
             "request": "launch",
             "mainClass": "src.Main",
-            "args": ["tests/resources/1.txt", 5]
+            "args": ["tests/resources/sample1.txt", 5]
 
         },
         {
@@ -23,7 +23,23 @@
             "name": "Launch sample2",
             "request": "launch",
             "mainClass": "src.Main",
-            "args": ["tests/resources/2.txt", 5]
+            "args": ["tests/resources/sample2.txt", 5]
+
+        },
+        {
+            "type": "java",
+            "name": "Launch sample3",
+            "request": "launch",
+            "mainClass": "src.Main",
+            "args": ["tests/resources/sample3.txt", 10]
+
+        },
+        {
+            "type": "java",
+            "name": "Launch sample5",
+            "request": "launch",
+            "mainClass": "src.Main",
+            "args": ["tests/resources/sample5.txt", 10]
 
         }
     ]

@@ -16,7 +16,7 @@ public class InstructionHandler {
         this.input = input;
         this.out = new PrintWriter(out, true);
 
-        // init stack location
+        // initialize stack pointer
         registers.write(Register.STACK_POINTER, 1000);
     }
 
@@ -56,7 +56,7 @@ public class InstructionHandler {
                 loadIndex(registers.read(Register.STACK_POINTER), Register.X);
                 break;
             case STORE:
-                memory.write(fetchNext(), registers.getAccumulator());
+                store();
                 break;
             case GET:
                 get();
@@ -65,7 +65,6 @@ public class InstructionHandler {
                 put();
                 break;
             case ADD_X:
-
                 add(Register.X);
                 break;
             case ADD_Y:
@@ -81,13 +80,13 @@ public class InstructionHandler {
                 registers.write(Register.X, registers.getAccumulator());
                 break;
             case COPY_FROM_X:
-                registers.setAccumulator(registers.read(Register.X));
+                load(registers.read(Register.X));
                 break;
             case COPY_TO_Y:
                 registers.write(Register.Y, registers.getAccumulator());
                 break;
             case COPY_FROM_Y:
-                registers.setAccumulator(registers.read(Register.Y));
+                load(registers.read(Register.Y));
                 break;
             case COPY_TO_STACK_POINTER:
                 registers.write(Register.STACK_POINTER, registers.getAccumulator());
@@ -112,17 +111,23 @@ public class InstructionHandler {
                 break;
             case INCREMENT_X:
                 registers.increment(Register.X, 1);
+                break;
             case DECREMENT_X:
                 registers.increment(Register.X, -1);
+                break;
             case PUSH:
                 push();
+                break;
             case POP:
                 pop();
+                break;
             case INTERRUPT:
                 // execute at 1500
                 interrupt(1500);
+                break;
             case INTERRUPT_RETURN:
                 interruptReturn();
+                break;
             case EXIT:
                 out.close();
                 return true;
@@ -141,9 +146,17 @@ public class InstructionHandler {
         load(memory.read(address));
     }
 
-    private void loadIndex(int value, Register register) throws IllegalAccessException {
-        checkMemoryAccess(registers.read(register));
-        loadAddress(value + memory.read(registers.read(register)));
+    /**
+     * Loads the index + the address in register.
+     */
+    private void loadIndex(int index, Register register) throws IllegalAccessException {
+        loadAddress(index + registers.read(register));
+    }
+
+    private void store() throws IllegalAccessException {
+        int address = fetchNext();
+        checkMemoryAccess(address);
+        memory.write(address, registers.getAccumulator());
     }
 
     private void get() {
@@ -182,8 +195,10 @@ public class InstructionHandler {
     }
 
     private void call() throws IllegalAccessException {
+        // fetch before pushing so PC is in the right spot
+        int address = fetchNext();
         pushStack(registers.read(Register.PROGRAM_COUNTER));
-        jump(fetchNext());
+        jump(address);
     }
 
     private void ret() throws IllegalAccessException {
@@ -198,14 +213,24 @@ public class InstructionHandler {
         registers.setAccumulator(popStack());
     }
 
+    /**
+     * Pushes value onto the stack.
+     * The stack pointer is changed before the value is written.
+     */
     private void pushStack(int value) {
         // change stack location before pushing
         registers.increment(Register.STACK_POINTER, -1);
+        // use new stack location
         memory.write(registers.read(Register.STACK_POINTER), value);
     }
 
+    /**
+     * Pops the topmost value of the stack as specified by the stack pointer.
+     * 
+     * @return the value removed from the stack.
+     */
     private int popStack() {
-        // fetch value from location pointed to by stack
+        // registers.increment(Register.STACK_POINTER, 1);
         return memory.read(registers.increment(Register.STACK_POINTER, 1));
     }
 
@@ -218,6 +243,7 @@ public class InstructionHandler {
 
     /**
      * Interrupts the processor. Throws if `canInterrupt()` is false.
+     * 
      * @throws IllegalAccessException
      */
     public void interrupt(int address) throws IllegalAccessException {
@@ -237,13 +263,13 @@ public class InstructionHandler {
     }
 
     private void interruptReturn() throws IllegalAccessException {
-        // stack is LIFO
+        // stack is LIFO, so program counter before stack pointer
         registers.write(Register.PROGRAM_COUNTER, popStack());
         // reset user stack - system stack is assumed to be empty now?
         registers.write(Register.STACK_POINTER, popStack());
+
         // resume normal execution
         jump(registers.read(Register.PROGRAM_COUNTER));
-
         interruptsEnabled = true;
         mode = OperatingMode.USER;
     }
@@ -254,8 +280,7 @@ public class InstructionHandler {
     private void checkMemoryAccess(int address) throws IllegalAccessException {
         if (address < 0 || address >= 2000) {
             throw new IllegalAccessException("The specified address is out of bounds.");
-        }
-        else if (mode == OperatingMode.USER && address >= 1000) {
+        } else if (mode == OperatingMode.USER && address >= 1000) {
             throw new IllegalAccessException("Cannot access the specified address in user mode.");
         }
     }
