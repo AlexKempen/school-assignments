@@ -74,10 +74,10 @@ public class InstructionHandler {
                 add(Register.Y);
                 break;
             case SUB_X:
-                sub(Register.X);
+                subtract(Register.X);
                 break;
             case SUB_Y:
-                sub(Register.Y);
+                subtract(Register.Y);
                 break;
             case COPY_TO_X:
                 registers.write(Register.X, registers.getAccumulator());
@@ -182,7 +182,7 @@ public class InstructionHandler {
         registers.increment(Register.ACCUMULATOR, registers.read(register));
     }
 
-    private void sub(Register register) {
+    private void subtract(Register register) {
         registers.increment(Register.ACCUMULATOR, -registers.read(register));
     }
 
