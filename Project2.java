@@ -23,7 +23,6 @@ class Project2 {
 
     public static void main(String[] args) throws InterruptedException {
         PrintStream out = System.out;
-
         Resources resources = new Resources(out);
         out.println(
                 String.format("Simulating Post Office with %d customers and %d postal workers",
@@ -130,10 +129,16 @@ abstract class ThreadBase extends Thread {
         print("created");
     }
 
+    /**
+     * Prints a message after applying name and id.
+     */
     protected void print(String message) {
         resources.out.println(String.format("%s %d " + message, name, id));
     }
 
+    /**
+     * Causes the thread to sleep for the specified amount of time.
+     */
     protected void sleep(double seconds) throws InterruptedException {
         Thread.sleep((long) (Project2.TIME_SCALE * 1000 * seconds));
     }
@@ -213,6 +218,9 @@ class PostalWorker extends ThreadBase {
         }
     }
 
+    /**
+     * Has the postal worker use the shared scale for the specified number of seconds.
+     */
     private void useScale(double seconds) throws InterruptedException {
         scale_mutex.acquire();
         resources.out.println("Scales in use by postal worker " + id);
