@@ -19,7 +19,7 @@ class Project2 {
     // Global variables used to control the program
     public static int CUSTOMERS = 50;
     public static int WORKERS = 3;
-    public static double TIME_SCALE = 0.1; // set to less than 1 to make time run faster
+    public static double TIME_SCALE = 1; // set to less than 1 to make time run faster
 
     public static void main(String[] args) throws InterruptedException {
         PrintStream out = System.out;
