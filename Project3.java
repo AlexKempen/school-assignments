@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.Scanner;
 
 class Project3 {
+    static final int START_SIZE = 1024;
     public static void main(String[] args) throws FileNotFoundException {
         PrintStream out = System.out;
-
         File inputFile = new File("input.txt");
+
         List<Request> requests = getRequests(inputFile);
+        /// We use a heap structure to organize left and right tree
         List<Box> boxes = new ArrayList<>();
-        Box box = new Box(1024);
+        Box box = new Box(START_SIZE);
         boxes.add(box);
 
         execute(out, requests, boxes);
@@ -57,18 +59,17 @@ class Project3 {
         }
         else {
             releaseBox(request.value, boxes);
-            combineBoxes(boxes);
         }
     }
 
     public static void allocateBox(int size, List<Box> boxes) {
         for (Box box : boxes) {
-            if (box.value == ' ' && box.size >= size) {
-                while (box.size / 2 >= size) {
-                    box.split();
-                    boxes.add(boxes.indexOf(box) + 1, new Box(box.size));
+            if (box.isEmpty() && box.getSize() >= size) {
+                while (box.getSize() / 2 >= size) {
+                    int index = boxes.indexOf(box);
+                    boxes.add(index + 1, box.split());
                 }
-                box.allocate(size);
+                box.allocate();
                 return;
             }
         }
@@ -76,25 +77,27 @@ class Project3 {
 
     public static void releaseBox(char c, List<Box> boxes) {
         for (Box box : boxes) {
-            if (box.value == c) {
+            if (box.getValue() == c) {
                 box.release();
+                combineBoxes(box, boxes);
                 return;
             }
         }
         throw new AssertionError("Failed to find char in boxes.");
     }
 
-    /**
-     * Recombines adjacent boxes if they are free and of the same size.
-     */
-    public static void combineBoxes(List<Box> boxes) {
-        for (int i = 0; i < boxes.size() - 1; ++i) {
-            Box curr = boxes.get(i), next = boxes.get(i + 1);
-            if (curr.value == ' ' && next.value == ' ' && curr.size == next.size) {
-                boxes.remove(i + 1);
+    public static void combineBoxes(Box box, List<Box> boxes) {
+        int totalSize = boxes.get(0).getSize();
+        for (int i = 1; i < boxes.size(); ++i) {
+            Box curr = boxes.get(i), prev = boxes.get(i - 1);
+            totalSize += curr.getSize();
+
+            if (START_SIZE % totalSize == 0 && curr.isEmpty() && prev.isEmpty() && curr.getSize() == prev.getSize()) {
+                boxes.remove(prev);
                 curr.merge();
-                // back up to enable recursive merges
-                i -= 1;
+                // back up to enable recursive merges; twice because we removed behind
+                i -= Math.min(i, 2);
+                totalSize -= curr.getSize();
             }
         }
     }
@@ -104,11 +107,10 @@ class Project3 {
         for (Box box : boxes) {
             middle += box.toString() + "|";
         }
-        String top = "-".repeat(middle.length());
-        String bottom = "-".repeat(middle.length());
-        out.println(top);
+        String header = "-".repeat(middle.length());
+        out.println(header);
         out.println(middle);
-        out.println(bottom);
+        out.println(header);
     }
 }
 
@@ -120,36 +122,53 @@ class Request {
 
 class Box {
     private static int count = 0;
-    public int size;
-    public char value = ' ';
-    private int savedSize;
+
+    private int size;
+    private boolean isEmpty = true;
+    private char value;
 
     public Box(int size) {
         this.size = size;
     }
 
-    public void allocate(int requestSize) {
-        savedSize = size;
-        size = requestSize;
+    // public Box(int size, int pairOffset) {
+    //     this.size = size;
+    //     this.pairOffset = pairOffset;
+    // }
+
+    public void allocate() {
         value = (char)('A' + count++);
+        isEmpty = false;
     }
 
     public void release() {
-        size = savedSize;
-        value = ' ';
+        isEmpty = true;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getValue() {
+        return value;
+    }
+    
+    public boolean isEmpty() {
+        return isEmpty;
     }
     
     public void merge() {
         size *= 2;
     }
 
-    public void split() {
+    public Box split() {
         size /= 2;
+        return new Box(size);
     }
 
     @Override
     public String toString() {
-        return String.format(" %c%5dK ", value, size);
+        return String.format(" %c%5dK ", (isEmpty ? ' ' : value), size);
     }
 }
 
