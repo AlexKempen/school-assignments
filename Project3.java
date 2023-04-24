@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,12 +11,8 @@ class Project3 {
         File inputFile = new File("input.txt");
 
         List<Request> requests = getRequests(inputFile);
-        /// We use a heap structure to organize left and right tree
-        List<Box> boxes = new ArrayList<>();
-        Box box = new Box(START_SIZE);
-        boxes.add(box);
-
-        execute(out, requests, boxes);
+        Box root = new Box(START_SIZE);
+        execute(out, requests, root);
     }
 
     public static List<Request> getRequests(File file) throws FileNotFoundException  {
@@ -37,8 +32,8 @@ class Project3 {
         } 
     }
 
-    public static void execute(PrintStream out, List<Request> requests, List<Box> boxes) {
-        printBoxes(out, boxes);
+    public static void execute(PrintStream out, List<Request> requests, Box root) {
+        printBoxes(out, root);
         for (Request request : requests) {
             String str;
             if (request.isRequest) {
@@ -48,65 +43,35 @@ class Project3 {
                 str = String.format("Release %c", request.value);
             }
             out.println(str);
-            handleRequest(request, boxes);
-            printBoxes(out, boxes);
+            handleRequest(request, root);
+            printBoxes(out, root);
         }
     }
 
-    public static void handleRequest(Request request, List<Box> boxes) {
+    public static void handleRequest(Request request, Box root) {
         if (request.isRequest) {
-            allocateBox(request.size, boxes);
+            allocateBox(request.size, root);
         }
         else {
-            releaseBox(request.value, boxes);
+            releaseBox(request.value, root);
         }
     }
 
-    public static void allocateBox(int size, List<Box> boxes) {
-        for (Box box : boxes) {
-            if (box.isEmpty() && box.getSize() >= size) {
-                while (box.getSize() / 2 >= size) {
-                    int index = boxes.indexOf(box);
-                    boxes.add(index + 1, box.split());
-                }
-                box.allocate();
-                return;
-            }
+    public static void allocateBox(int size, Box root) {
+        if (!root.allocate(size)) {
+            throw new AssertionError("Failed to find sufficient space in root.");
         }
     }
 
-    public static void releaseBox(char c, List<Box> boxes) {
-        for (Box box : boxes) {
-            if (box.getValue() == c) {
-                box.release();
-                combineBoxes(box, boxes);
-                return;
-            }
+    public static void releaseBox(char c, Box root) {
+        if (!root.release(c)) {
+            throw new AssertionError("Failed to find char in boxes.");
         }
-        throw new AssertionError("Failed to find char in boxes.");
+        root.merge();
     }
 
-    public static void combineBoxes(Box box, List<Box> boxes) {
-        int totalSize = boxes.get(0).getSize();
-        for (int i = 1; i < boxes.size(); ++i) {
-            Box curr = boxes.get(i), prev = boxes.get(i - 1);
-            totalSize += curr.getSize();
-
-            if (START_SIZE % totalSize == 0 && curr.isEmpty() && prev.isEmpty() && curr.getSize() == prev.getSize()) {
-                boxes.remove(prev);
-                curr.merge();
-                // back up to enable recursive merges; twice because we removed behind
-                i -= Math.min(i, 2);
-                totalSize -= curr.getSize();
-            }
-        }
-    }
-
-    public static void printBoxes(PrintStream out, List<Box> boxes) {
-        String middle = "|";
-        for (Box box : boxes) {
-            middle += box.toString() + "|";
-        }
+    public static void printBoxes(PrintStream out, Box root) {
+        String middle = "|" + root.toString();
         String header = "-".repeat(middle.length());
         out.println(header);
         out.println(middle);
@@ -127,22 +92,11 @@ class Box {
     private boolean isEmpty = true;
     private char value;
 
+    private Box left = null;
+    private Box right = null;
+
     public Box(int size) {
         this.size = size;
-    }
-
-    // public Box(int size, int pairOffset) {
-    //     this.size = size;
-    //     this.pairOffset = pairOffset;
-    // }
-
-    public void allocate() {
-        value = (char)('A' + count++);
-        isEmpty = false;
-    }
-
-    public void release() {
-        isEmpty = true;
     }
 
     public int getSize() {
@@ -156,19 +110,76 @@ class Box {
     public boolean isEmpty() {
         return isEmpty;
     }
-    
-    public void merge() {
-        size *= 2;
+
+    public boolean allocate(int requestSize) {
+        if (left != null && left.allocate(requestSize)) {
+            return true;
+        }
+        else if (right != null && right.allocate(requestSize)) {
+            return true;
+        }
+        // choose this (empty) node to allocate about
+        else if (left == null && right == null && isEmpty && requestSize <= size) {
+            // request is small; split this node and allocate, possibly recursively
+            if (requestSize <= size / 2) {
+                split();
+                isEmpty = false;
+                left.allocate(requestSize);
+            }
+            else {
+                // assign to node
+                value = (char)('A' + count++);
+                isEmpty = false;
+            }
+            return true;
+        }
+        return false;
     }
 
-    public Box split() {
-        size /= 2;
-        return new Box(size);
+    public boolean release(char c) {
+        if (value == c) {
+            isEmpty = true;
+            return true;
+        }
+        else if (left != null && left.release(c)) {
+            return true;
+        }
+        else if (right != null && right.release(c)) {
+            return true;
+        }
+        return false;
+    }
+    
+    public void merge() {
+        if (left != null) {
+            left.merge();
+        }
+        if (right != null) {
+            right.merge();
+        }
+
+        if (left != null && right != null && left.isEmpty() && right.isEmpty()) {
+            isEmpty = true;
+            left = null;
+            right = null;
+        }
+    }
+
+    public void split() {
+        if (!isEmpty) {
+            throw new AssertionError("Cannot split non-empty box.");
+        }
+        left = new Box(size / 2);
+        right = new Box(size / 2);
     }
 
     @Override
     public String toString() {
-        return String.format(" %c%5dK ", (isEmpty ? ' ' : value), size);
+        if (left == null && right == null) {
+            return String.format(" %c%5dK ", (isEmpty ? ' ' : value), size) + "|";
+        }
+        // tree is guaranteed to be balanced thanks to split
+        return left.toString() + right.toString();
     }
 }
 
